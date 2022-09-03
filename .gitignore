@@ -9,3 +9,12 @@
 /RestaurantBLL/obj
 /RestaurantDAL/obj
 /RestaurantWebAPI/obj
+/RestaurantBLL/bin/Debug/net6.0
+/RestaurantDAL/bin/Debug/net6.0
+/RestaurantDTO/bin/Debug/net6.0
+/RestaurantDTO/obj
+/RestaurantUtilities/bin/Debug/net6.0
+/RestaurantUtilities/obj/Debug/net6.0/ref
+/RestaurantUtilities/obj/Debug/net6.0
+/RestaurantUtilities/obj
+/RestaurantWebAPI/bin/Debug/net6.0
