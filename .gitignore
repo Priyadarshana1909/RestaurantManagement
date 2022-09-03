@@ -6,3 +6,6 @@
 /RestaurantWebApplication/bin/Debug/net6.0
 *.sqlite
 /.vs
+/RestaurantBLL/obj
+/RestaurantDAL/obj
+/RestaurantWebAPI/obj
