@@ -8,6 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="bootstrap" Version="5.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.8" />
+    <PackageReference Include="RestSharp" Version="106.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RestaurantDTO\RestaurantDTO.csproj" />
   </ItemGroup>
 
 </Project>

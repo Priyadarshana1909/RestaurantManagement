@@ -5,28 +5,28 @@ using RestaurantDTO.Response;
 
 namespace RestaurantDAL
 {
-    public class ManageRestaurantDAL : IManageRestaurantDAL
+    public class ManageCuisineDAL : IManageCuisineDAL
     {
         private static string ConnectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json")
             .Build().GetConnectionString("DefaultConnection");
-        public RestaurantResponse GetRestaurants(int? RestaurantId)
+        public CuisineResponse GetCuisines(int? CuisineId)
         {
-            var response = new RestaurantResponse { IsSuccessFull = false };
+            var response = new CuisineResponse { IsSuccessFull = false };
             try
             {
                
                 SqlParameter[] parameters2 = new SqlParameter[1];
 
-                parameters2[0] = new SqlParameter("@RestaurantID", RestaurantId);
+                parameters2[0] = new SqlParameter("@CuisineID", CuisineId);
                
-                var ds2 = SqlHelper.ExecuteDataset(ConnectionString, "USP_GetRestaurant", parameters2);
+                var ds2 = SqlHelper.ExecuteDataset(ConnectionString, "USP_GetCuisine", parameters2);
 
-                List<Restaurant> restaurants = new();
+                List<Cuisine> cuisines = new();
                 if (ds2 != null && ds2.Tables.Count > 0)
-                    restaurants = DataAccessHelper.ConvertToList<Restaurant>(ds2.Tables[0]);
+                    cuisines = DataAccessHelper.ConvertToList<Cuisine>(ds2.Tables[0]);
 
                 response.IsSuccessFull = true;
-                response.Restaurants = restaurants;
+                response.Cuisines = cuisines;
             }
             catch (Exception ex)
             {

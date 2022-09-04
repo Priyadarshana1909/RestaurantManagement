@@ -21,12 +21,14 @@ namespace RestaurantWebAPI.Extensions
         public static IServiceCollection AddDAL(this IServiceCollection services)
         {
             services.AddTransient<IManageRestaurantDAL, ManageRestaurantDAL>();
+            services.AddTransient<IManageCuisineDAL, ManageCuisineDAL>();
             return services;
         }
 
         public static IServiceCollection AddBLL(this IServiceCollection services)
         {
             services.AddTransient<IManageRestaurantBLL, ManageRestaurantBLL>();
+            services.AddTransient<IManageCuisineBLL, ManageCuisineBLL>();
             return services;
         }
     }

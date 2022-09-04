@@ -23,16 +23,14 @@
 							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Manage</a>
-
-
+							<a class="nav-link text-dark" asp-area="" asp-controller="Cuisine" asp-action="Index">Cuisine</a>
 						</li>
 					</ul>
-					<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+					@*<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
 						<li><a class="dropdown-item" href="#">Action</a></li>
 						<li><a class="dropdown-item" href="#">Another action</a></li>
 						<li><a class="dropdown-item" href="#">Something else here</a></li>
-					</ul>
+					</ul>*@
 				</div>
 			</div>
 		</nav>
@@ -45,7 +43,7 @@
 
 	<footer class="border-top footer text-muted">
 		<div class="container">
-			&copy; 2022 - RestaurantWebApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+			&copy; 2022 - Restaurant Management - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
 		</div>
 	</footer>
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>

@@ -9,9 +9,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddContext();
+//Dependancy resolver
 builder.Services.AddDAL();
 builder.Services.AddBLL();
-
+//Dependancy resolver
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
