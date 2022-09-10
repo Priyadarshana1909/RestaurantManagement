@@ -1,0 +1,56 @@
+﻿@model RestaurantDTO.Request.AddUpdateCuisine
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Cuisine</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+          
+        <div class="form-group">
+            @Html.LabelFor(model => model.re, htmlAttributes: new { @class = "", @style = "margin-top: 9px;" })
+            @*@Html.EditorFor(model => model.line_cd, new { htmlAttributes = new { @id = "txtlinecd", @class = "form-control nospecialcharacter", placeholder = "Line Code", @tabindex = "2", @maxLength = "500" } })*@
+            @Html.DropDownListFor(model => model.line_cd,(SelectList)ViewBag.LineCodeList,"-- select line referrence--", new { @class = "dropdown2", required = "required", @tabindex = "2" })
+            @Html.ValidationMessageFor(model => model.line_cd, "", new { @class = "text-danger" })
+        </div>
+
+ 
+            <div class="form-group">
+                <label asp-for="CuisineId" class="control-label"></label>
+                <input asp-for="CuisineId" class="form-control" />
+                <span asp-validation-for="CuisineId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RestaurantId" class="control-label"></label>
+                <input asp-for="RestaurantId" class="form-control" />
+                <span asp-validation-for="RestaurantId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CuisineName" class="control-label"></label>
+                <input asp-for="CuisineName" class="form-control" />
+                <span asp-validation-for="CuisineName" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsDelete" /> @Html.DisplayNameFor(model => model.IsDelete)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

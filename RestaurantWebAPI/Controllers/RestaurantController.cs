@@ -18,10 +18,11 @@ namespace RestaurantWebAPI.Controllers
 
        
 
-        [HttpGet(Name = "GetRestaurant")]
-        public async Task<ActionResult<RestaurantResponse>> Get()
+        [HttpGet]
+        [Route("GetRestaurant/{RestaurantId}")]
+        public async Task<ActionResult<RestaurantResponse>> Get(int RestaurantId = 0)
         {
-            var response = _manageRestaurantBLL.GetRestaurants(null);
+            var response = _manageRestaurantBLL.GetRestaurants(RestaurantId > 0 ? RestaurantId : null);
 
             return response;
         }

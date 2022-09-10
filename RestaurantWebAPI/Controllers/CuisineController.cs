@@ -15,10 +15,11 @@ namespace RestaurantWebAPI.Controllers
             _manageCuisineBLL = manageCuisineBLL;
         }
 
-        [HttpGet(Name = "GetCuisine")]
-        public async Task<ActionResult<CuisineResponse>> Get()
+        [HttpGet]
+        [Route("GetCuisine/{CuisineId}")]
+        public async Task<ActionResult<CuisineResponse>> Get(int CuisineId = 0)
         {
-            var response = _manageCuisineBLL.GetCuisines(null);
+            var response = _manageCuisineBLL.GetCuisines(CuisineId > 0? CuisineId : null);
             return response;
         }
     }
