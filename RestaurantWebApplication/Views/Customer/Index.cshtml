@@ -1,10 +1,10 @@
-﻿@model IEnumerable<RestaurantDTO.Response.Cuisine>
+﻿@model IEnumerable<RestaurantDTO.Response.Customer>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Cuisine</h1>
+<h1>Customer</h1>
 <div id ="divMessage" style="display:none;"></div>
 @if (TempData["Message"] != null && Convert.ToString(TempData["Message"]).ToLower().Contains("success"))
 {
@@ -21,7 +21,10 @@ else @if (TempData["Message"] != null)
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.CuisineName)
+                @Html.DisplayNameFor(model => model.CustomerName)
+            </th>
+             <th>
+                @Html.DisplayNameFor(model => model.MobileNo)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.RestaurantName)
@@ -34,15 +37,18 @@ else @if (TempData["Message"] != null)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CuisineName)
+                    @Html.DisplayFor(modelItem => item.CustomerName)
+                </td>
+                 <td>
+                    @Html.DisplayFor(modelItem => item.MobileNo)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.RestaurantName)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new {  id = item.CuisineID  }) |
-                    <a href="javascript:void(0);" class="delete" id="@item.CuisineID" 
-                    data-href="@Url.Action("Delete", "Cuisine", new { lineid = item.CuisineID })">Delete</a>
+                    @Html.ActionLink("Edit", "Edit", new {  id = item.CustomerID  }) |
+                    <a href="javascript:void(0);" class="delete" id="@item.CustomerID" 
+                    data-href="@Url.Action("Delete", "Customer", new { id = item.CustomerID })">Delete</a>
                 </td>
             </tr>
         }

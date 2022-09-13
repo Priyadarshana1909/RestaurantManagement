@@ -5,14 +5,14 @@ namespace RestaurantDTO.Request
 {
     public class AddUpdateCuisine
     {
-        public int? CuisineId { get; set; }
+        public int CuisineId { get; set; }
 
         [Required]
-        public int? RestaurantId { get; set; }
+        public int RestaurantId { get; set; }
 
         public List<Restaurant> Restaurants { get; set; } = new();
 
-        [Required]
+        [Required(AllowEmptyStrings = false)]
         [MaxLength(50)]
         public string CuisineName { get; set; }
 

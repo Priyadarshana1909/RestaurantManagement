@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestaurantBLL.Interface;
+using RestaurantDTO.Request;
 using RestaurantDTO.Response;
 
 namespace RestaurantWebAPI.Controllers
@@ -20,6 +21,14 @@ namespace RestaurantWebAPI.Controllers
         public async Task<ActionResult<CuisineResponse>> Get(int CuisineId = 0)
         {
             var response = _manageCuisineBLL.GetCuisines(CuisineId > 0? CuisineId : null);
+            return response;
+        }
+
+        [HttpPost]
+        [Route("AddUpdateCuisine")]
+        public async Task<ActionResult<BaseResponse>> AddUpdateCuisine(AddUpdateCuisine addUpdateCuisine)
+        {
+            var response = _manageCuisineBLL.AddUpdateCuisine(addUpdateCuisine);
             return response;
         }
     }

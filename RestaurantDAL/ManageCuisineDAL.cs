@@ -1,7 +1,9 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using RestaurantDAL.Interface;
+using RestaurantDTO.Request;
 using RestaurantDTO.Response;
+using System.Data;
 
 namespace RestaurantDAL
 {
@@ -27,6 +29,35 @@ namespace RestaurantDAL
 
                 response.IsSuccessFull = true;
                 response.Cuisines = cuisines;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccessFull = false;
+                response.ErrorMessage = ex.Message;
+            }
+            return response;
+        }
+
+        public BaseResponse AddUpdateCuisine(AddUpdateCuisine addUpdateCuisine)
+        {
+            var response = new BaseResponse();
+            try
+            {
+
+                SqlParameter[] parameters2 = new SqlParameter[5];
+                var newlyaddedValue = 0;
+                parameters2[0] = new SqlParameter("@CuisineID", addUpdateCuisine.CuisineId);
+                parameters2[1] = new SqlParameter("@RestaurantID", addUpdateCuisine.RestaurantId);
+                parameters2[2] = new SqlParameter("@CuisineName", addUpdateCuisine.CuisineName);
+                parameters2[3] = new SqlParameter("@IsDelete", addUpdateCuisine.IsDelete);
+                parameters2[4] = new SqlParameter("@OutputCuisineId", newlyaddedValue)
+                {
+                    Direction = ParameterDirection.Output
+                 
+                };
+
+                SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure, "USP_Cuisine", parameters2);
+                response.IsSuccessFull = true;
             }
             catch (Exception ex)
             {

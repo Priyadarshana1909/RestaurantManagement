@@ -1,10 +1,10 @@
-﻿@model RestaurantDTO.Request.AddUpdateCuisine
+﻿@model RestaurantDTO.Request.AddUpdateCustomer
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create Cuisine</h1>
+<h1>Create Customer</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -17,12 +17,18 @@
                         class="form-control"
                         asp-items="@(new SelectList(Model.Restaurants,"RestaurantID", "RestaurantName"))">
                 </select>
-                <span asp-validation-for="CuisineId" class="text-danger"></span>
+                <span asp-validation-for="CustomerId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CuisineName" class="control-label"></label>
-                <input asp-for="CuisineName" class="form-control" />
-                <span asp-validation-for="CuisineName" class="text-danger"></span>
+                <label asp-for="CustomerName" class="control-label"></label>
+                <input asp-for="CustomerName" class="form-control" />
+                <span asp-validation-for="CustomerName" class="text-danger"></span>
+            </div>
+
+              <div class="form-group">
+                <label asp-for="MobileNo" class="control-label"></label>
+                <input asp-for="MobileNo" class="form-control" />
+                <span asp-validation-for="MobileNo" class="text-danger"></span>
             </div>
          
             <div class="form-group">
