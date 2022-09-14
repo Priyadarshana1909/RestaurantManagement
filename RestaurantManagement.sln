@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DBScripts", "DBScripts", "{31A45199-4967-4191-AB14-3273D78670B7}"
 	ProjectSection(SolutionItems) = preProject
 		E:\RestaurantScripts\DataGeneration.sql = E:\RestaurantScripts\DataGeneration.sql
+		Reports.sql = Reports.sql
 		E:\RestaurantScripts\SchemaGeneration.sql = E:\RestaurantScripts\SchemaGeneration.sql
 	EndProjectSection
 EndProject
