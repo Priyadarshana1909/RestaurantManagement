@@ -140,15 +140,22 @@ namespace RestaurantWebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            AddUpdateCustomer addUpdateCuisine = new();
-            addUpdateCuisine.CustomerId = id;
-            addUpdateCuisine.IsDelete = true;
-            addUpdateCuisine.CustomerName = "CustomerName";
-            addUpdateCuisine.MobileNo = "1234567890";
+            var response = await _apiService.ExecuteRequest<CustomerResponse>("Customer/GetCustomer/" + id, HttpMethod.Get, null);
+            AddUpdateCustomer addUpdateCustomer = new();
 
-            var response = await _apiService.ExecuteRequest<CustomerResponse>("Customer/AddUpdateCustomer", HttpMethod.Post, addUpdateCuisine);
-            return null;
-            
+            if (response != null)
+            {
+                addUpdateCustomer.RestaurantId = response.Customers[0].RestaurantID;
+                addUpdateCustomer.CustomerId = id;
+                addUpdateCustomer.CustomerName = response.Customers[0].CustomerName;
+                addUpdateCustomer.MobileNo = response.Customers[0].MobileNo;
+            }
+
+            addUpdateCustomer.IsDelete = true;
+
+            var deleteCustomerResponse = await _apiService.ExecuteRequest<CustomerResponse>("Customer/AddUpdateCustomer", HttpMethod.Post, addUpdateCustomer);
+            return Json(deleteCustomerResponse);
+
         }
         #endregion
 

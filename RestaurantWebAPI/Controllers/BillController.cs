@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestaurantBLL.Interface;
+using RestaurantDTO.Request;
 using RestaurantDTO.Response;
 
 namespace RestaurantWebAPI.Controllers
@@ -23,12 +24,14 @@ namespace RestaurantWebAPI.Controllers
             return response;
         }
 
-        //[HttpPost]
-        //[Route("AddUpdateOrder")]
-        //public async Task<ActionResult<BaseResponse>> AddUpdateOrder(AddUpdateOrder AddUpdateOrder)
-        //{
-        //    var response = _manageOrderBLL.AddUpdateOrder(AddUpdateOrder);
-        //    return response;
-        //}
+
+        [HttpPost]
+        [Route("AddUpdateBill")]
+        public async Task<ActionResult<BaseResponse>> AddUpdateBill(AddUpdateBill addUpdateBill)
+        {
+            var response = _manageBillBLL.AddUpdateBill(addUpdateBill);
+            return response;
+        }
+       
     }
 }

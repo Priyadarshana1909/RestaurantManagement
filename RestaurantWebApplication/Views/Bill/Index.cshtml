@@ -75,9 +75,13 @@ else @if (TempData["Message"] != null)
                      cache: false,
                      async: false,
                      success: function (result) {
-                         if (result.IsSuccessFull != null) {
+                        if (result.isSuccessFull == true || result.isSuccessFull == 'true') {
                             $('#divMessage').show();
-                            $('#divMessage').html('Cuisine deleted successfully');
+                            $('#divMessage').html('Bill deleted successfully');
+
+                            setTimeout(function () {
+                                  location.reload(true);
+                                }, 100);
                          } else if (result.ErrorMessage != null) {
                             $('#divMessage').show();
                             $('#divMessage').html(result.ErrorMessage);

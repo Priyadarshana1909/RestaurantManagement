@@ -50,19 +50,26 @@ namespace RestaurantWebApplication.Controllers
                 addUpdateBill.Customers = customerResponse.Customers;
             }
 
+            var orderResponse = await _apiService.ExecuteRequest<OrderResponse>("Order/GetOrder/0", HttpMethod.Get, null);
+
+            if (orderResponse?.Orders != null)
+            {
+                addUpdateBill.Orders = orderResponse.Orders;
+            }
+
             return View(addUpdateBill);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(AddUpdateCuisine addUpdateCuisine)
+        public async Task<IActionResult> Create(AddUpdateBill addUpdateBill)
         {
             if (ModelState.IsValid)
             {
-                var response = await _apiService.ExecuteRequest<RestaurantResponse>("Cuisine/AddUpdateCuisine", HttpMethod.Post, addUpdateCuisine);
+                var response = await _apiService.ExecuteRequest<RestaurantResponse>("Bill/AddUpdateBill", HttpMethod.Post, addUpdateBill);
 
                 if (response != null && response.IsSuccessFull)
                 {
-                    TempData["Message"] = "Cuisine saved successfully";
+                    TempData["Message"] = "Bill saved successfully";
                 }
                 else
                 {
@@ -77,47 +84,65 @@ namespace RestaurantWebApplication.Controllers
 
                 if (restaurants?.Restaurants != null)
                 {
-                    addUpdateCuisine.Restaurants = restaurants.Restaurants;
+                    addUpdateBill.Restaurants = restaurants.Restaurants;
                 }
             }
 
-            return View(addUpdateCuisine);
+            return View(addUpdateBill);
         }
         #endregion
 
         #region "Edit"
+
+
         public async Task<IActionResult> Edit(int id)
         {
-            var addUpdateCuisine = new AddUpdateCuisine();
+            var addUpdateBill = new AddUpdateBill();
 
             var restaurants = await _apiService.ExecuteRequest<RestaurantResponse>("Restaurant/GetRestaurant/0", HttpMethod.Get, null);
 
             if (restaurants?.Restaurants != null)
             {
-                addUpdateCuisine.Restaurants = restaurants.Restaurants;
+                addUpdateBill.Restaurants = restaurants.Restaurants;
             }
 
-            var response = await _apiService.ExecuteRequest<CuisineResponse>("Cuisine/GetCuisine/" + id, HttpMethod.Get, null);
+            var orders = await _apiService.ExecuteRequest<OrderResponse>("Order/GetOrder/0", HttpMethod.Get, null);
+
+            if (orders?.Orders != null)
+            {
+                addUpdateBill.Orders = orders.Orders;
+            }
+
+            var customers = await _apiService.ExecuteRequest<CustomerResponse>("Customer/GetCustomer/0", HttpMethod.Get, null);
+
+            if (customers?.Customers != null)
+            {
+                addUpdateBill.Customers = customers.Customers;
+            }
+
+            var response = await _apiService.ExecuteRequest<BillResponse>("Bill/GetBill/" + id, HttpMethod.Get, null);
 
             if (response != null)
             {
-                addUpdateCuisine.RestaurantId = response.Cuisines[0].RestaurantID;
-                addUpdateCuisine.CuisineId = id;
-                addUpdateCuisine.CuisineName = response.Cuisines[0].CuisineName;
+                addUpdateBill.OrderID = response.Bills[0].OrderID;
+                addUpdateBill.BillsID = id;
+                addUpdateBill.RestaurantID = response.Bills[0].RestaurantID;
+                addUpdateBill.BillAmount = response.Bills[0].BillAmount;
+                addUpdateBill.CustomerID = response.Bills[0].CustomerID;
             }
-            return View(addUpdateCuisine);
+            return View(addUpdateBill);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(AddUpdateCuisine addUpdateCuisine)
+        public async Task<IActionResult> Edit(AddUpdateBill addUpdateBill)
         {
             if (ModelState.IsValid)
             {
-                var response = await _apiService.ExecuteRequest<RestaurantResponse>("Cuisine/AddUpdateCuisine", HttpMethod.Post, addUpdateCuisine);
+                var response = await _apiService.ExecuteRequest<RestaurantResponse>("Bill/AddUpdateBill", HttpMethod.Post, addUpdateBill);
 
                 if (response != null && response.IsSuccessFull)
                 {
-                    TempData["Message"] = "Cuisine updated successfully";
+                    TempData["Message"] = "Bill updated successfully";
                 }
                 else
                 {
@@ -132,11 +157,25 @@ namespace RestaurantWebApplication.Controllers
 
                 if (restaurants?.Restaurants != null)
                 {
-                    addUpdateCuisine.Restaurants = restaurants.Restaurants;
+                    addUpdateBill.Restaurants = restaurants.Restaurants;
+                }
+
+                var orders = await _apiService.ExecuteRequest<OrderResponse>("Order/GetOrder/0", HttpMethod.Get, null);
+
+                if (orders?.Orders != null)
+                {
+                    addUpdateBill.Orders = orders.Orders;
+                }
+
+                var customers = await _apiService.ExecuteRequest<CustomerResponse>("Customer/GetCustomer/0", HttpMethod.Get, null);
+
+                if (customers?.Customers != null)
+                {
+                    addUpdateBill.Customers = customers.Customers;
                 }
             }
 
-            return View(addUpdateCuisine);
+            return View(addUpdateBill);
         }
         #endregion
 
@@ -146,14 +185,22 @@ namespace RestaurantWebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            AddUpdateCuisine addUpdateCuisine = new();
-            addUpdateCuisine.CuisineId = id;
-            addUpdateCuisine.IsDelete = true;
-            addUpdateCuisine.CuisineName = "CuisineName";
+            var response = await _apiService.ExecuteRequest<BillResponse>("Bill/GetBill/" + id, HttpMethod.Get, null);
+            AddUpdateBill addUpdateBill = new();
 
-            var response = await _apiService.ExecuteRequest<RestaurantResponse>("Cuisine/AddUpdateCuisine", HttpMethod.Post, addUpdateCuisine);
+            if (response != null)
+            {
+                addUpdateBill.OrderID = response.Bills[0].OrderID;
+                addUpdateBill.BillsID = id;
+                addUpdateBill.RestaurantID = response.Bills[0].RestaurantID;
+                addUpdateBill.BillAmount = response.Bills[0].BillAmount;
+                addUpdateBill.CustomerID = response.Bills[0].CustomerID;    
+            }
 
-            return null;
+            addUpdateBill.IsDelete = true;
+
+            var deleteBillResponse = await _apiService.ExecuteRequest<BillResponse>("Bill/AddUpdateBill", HttpMethod.Post, addUpdateBill);
+            return Json(deleteBillResponse);
         }
         #endregion
 

@@ -140,13 +140,19 @@ namespace RestaurantWebApplication.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             AddUpdateCuisine addUpdateCuisine = new();
-            addUpdateCuisine.CuisineId = id;
+            var response = await _apiService.ExecuteRequest<CuisineResponse>("Cuisine/GetCuisine/" + id, HttpMethod.Get, null);
+
+            if (response != null)
+            {
+                addUpdateCuisine.RestaurantId = response.Cuisines[0].RestaurantID;
+                addUpdateCuisine.CuisineId = id;
+                addUpdateCuisine.CuisineName = response.Cuisines[0].CuisineName;
+            }
+
             addUpdateCuisine.IsDelete = true;
-            addUpdateCuisine.CuisineName = "CuisineName";
+            var CuisineDeleteResponse = await _apiService.ExecuteRequest<RestaurantResponse>("Cuisine/AddUpdateCuisine", HttpMethod.Post, addUpdateCuisine);
 
-            var response = await _apiService.ExecuteRequest<RestaurantResponse>("Cuisine/AddUpdateCuisine", HttpMethod.Post, addUpdateCuisine);
-
-            return null;
+            return Json(CuisineDeleteResponse);
         }
         #endregion
 

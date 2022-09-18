@@ -170,9 +170,9 @@ namespace RestaurantWebApplication.Controllers
         {
             var addUpdateOrder = await GetExisingOrder(id);
             addUpdateOrder.IsDelete = true;
-            await _apiService.ExecuteRequest<RestaurantResponse>("Order/AddUpdateOrder", HttpMethod.Post, addUpdateOrder);
+            var orderDeteleResponse = await _apiService.ExecuteRequest<RestaurantResponse>("Order/AddUpdateOrder", HttpMethod.Post, addUpdateOrder);
 
-            return null;
+            return Json(orderDeteleResponse);
         }
         #region "Private functions"
         private async Task<MenuItemResponse> _getMenuItems(int RestaurantId)

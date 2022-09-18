@@ -1,5 +1,6 @@
 ﻿using RestaurantBLL.Interface;
 using RestaurantDAL.Interface;
+using RestaurantDTO.Request;
 using RestaurantDTO.Response;
 
 namespace RestaurantBLL
@@ -15,6 +16,11 @@ namespace RestaurantBLL
         public BillResponse GetBill(int? BillId)
         {
             return _manageBillDAL.GetBill(BillId);
+        }
+
+        public BaseResponse AddUpdateBill(AddUpdateBill AddUpdateBill)
+        {
+            return _manageBillDAL.AddUpdateBill(AddUpdateBill);
         }
     }
 }
