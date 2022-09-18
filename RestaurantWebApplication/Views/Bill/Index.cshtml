@@ -1,0 +1,91 @@
+﻿@model IEnumerable<RestaurantDTO.Response.Bill>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Bill</h1>
+<div id="divMessage" style="display:none;"></div>
+@if (TempData["Message"] != null && Convert.ToString(TempData["Message"]).ToLower().Contains("success"))
+{
+    <div class="alert alert-success">@Convert.ToString(TempData["Message"])</div>
+}
+else @if (TempData["Message"] != null)
+{
+    <div class="alert alert-danger">@Convert.ToString(TempData["Message"])</div>
+}
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RestaurantName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BillAmount)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CustomerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RestaurantName)
+                </td>
+               
+                <td style="text-align:right;width:140px;">
+                    @Html.DisplayFor(modelItem => item.BillAmount)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new {  id = item.BillsID  }) |
+                    <a href="javascript:void(0);" class="delete" id="@item.BillsID"
+                   data-href="@Url.Action("Delete", "Bill", new { lineid = item.BillsID })">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts
+{
+<script type="text/javascript">
+    $(document).on("click", ".delete", function () {
+
+             if (confirm('Are you sure you want to delete?')) {
+
+                 $.ajax({
+                     url: $(this).attr("data-href"),
+                     type: 'POST',
+                     data: { id: $(this).attr("id") },
+                     cache: false,
+                     async: false,
+                     success: function (result) {
+                         if (result.IsSuccessFull != null) {
+                            $('#divMessage').show();
+                            $('#divMessage').html('Cuisine deleted successfully');
+                         } else if (result.ErrorMessage != null) {
+                            $('#divMessage').show();
+                            $('#divMessage').html(result.ErrorMessage);
+                         }
+                     }
+                 });
+                 $('.modaldivpleasewait').hide();
+             }
+         });
+</script>
+}

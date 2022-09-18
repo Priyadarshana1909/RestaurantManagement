@@ -5,12 +5,12 @@ using RestaurantWebApplication.Services.Interface;
 
 namespace RestaurantWebApplication.Controllers
 {
-    public class CuisineController : Controller
+    public class BillController : Controller
     {
-        private readonly ILogger<CuisineController> _logger;
+        private readonly ILogger<BillController> _logger;
         private readonly IAPIService _apiService;
 
-        public CuisineController(ILogger<CuisineController> logger, IAPIService aPiService)
+        public BillController(ILogger<BillController> logger, IAPIService aPiService)
         {
             _logger = logger;
             _apiService = aPiService;
@@ -21,29 +21,36 @@ namespace RestaurantWebApplication.Controllers
         #region "Index"
         public async Task<IActionResult> Index()
         {
-            var response = await _apiService.ExecuteRequest<CuisineResponse>("Cuisine/GetCuisine/0", HttpMethod.Get, null);
+            var response = await _apiService.ExecuteRequest<BillResponse>("Bill/GetBill/0", HttpMethod.Get, null);
 
             if (response != null && response.IsSuccessFull)
             {
-                return View(response.Cuisines);
+                return View(response.Bills);
             }
-            return View(new List<Cuisine>());
+            return View(new List<Bill>());
         }
         #endregion
 
         #region "Create"
         public async Task<IActionResult> Create()
         {
-            var addUpdateCuisine = new AddUpdateCuisine();
+            var addUpdateBill = new AddUpdateBill();
 
-            var restaurants = await _apiService.ExecuteRequest<RestaurantResponse>("Restaurant/GetRestaurant/0", HttpMethod.Get, null);
+            var restaurantResponse = await _apiService.ExecuteRequest<RestaurantResponse>("Restaurant/GetRestaurant/0", HttpMethod.Get, null);
 
-            if (restaurants?.Restaurants != null)
+            if (restaurantResponse?.Restaurants != null)
             {
-                addUpdateCuisine.Restaurants = restaurants.Restaurants;
+                addUpdateBill.Restaurants = restaurantResponse.Restaurants;
             }
-            
-            return View(addUpdateCuisine);
+
+            var customerResponse = await _apiService.ExecuteRequest<CustomerResponse>("Customer/GetCustomer/0", HttpMethod.Get, null);
+
+            if (customerResponse?.Customers != null)
+            {
+                addUpdateBill.Customers = customerResponse.Customers;
+            }
+
+            return View(addUpdateBill);
         }
 
         [HttpPost]

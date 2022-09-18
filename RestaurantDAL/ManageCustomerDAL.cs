@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using RestaurantDAL.Interface;
 using RestaurantDTO.Request;
 using RestaurantDTO.Response;
@@ -9,8 +8,7 @@ namespace RestaurantDAL
 {
     public class ManageCustomerDAL : IManageCustomerDAL
     {
-        private static string ConnectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json")
-            .Build().GetConnectionString("DefaultConnection");
+        private static string ConnectionString = Common.GetConnectionString();
         public CustomerResponse GetCustomers(int? CustomerID)
         {
             var response = new CustomerResponse { IsSuccessFull = false };

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RestaurantBLL.Interface;
+﻿using RestaurantBLL.Interface;
 using RestaurantDAL.Interface;
 using RestaurantDTO.Response;
 

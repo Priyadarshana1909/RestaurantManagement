@@ -4,28 +4,28 @@ using RestaurantDTO.Response;
 
 namespace RestaurantDAL
 {
-    public class ManageRestaurantDAL : IManageRestaurantDAL
+    public class ManageDiningTableDAL : IManageDiningTableDAL
     {
         private static string ConnectionString = Common.GetConnectionString();
-        
-        public RestaurantResponse GetRestaurants(int? RestaurantId)
+
+        public DiningTableResponse GetDiningTablesFromRestaurantId(int RestaurantId)
         {
-            var response = new RestaurantResponse { IsSuccessFull = false };
+            var response = new DiningTableResponse { IsSuccessFull = false };
             try
             {
-               
+
                 SqlParameter[] parameters2 = new SqlParameter[1];
 
                 parameters2[0] = new SqlParameter("@RestaurantID", RestaurantId);
-               
-                var ds2 = SqlHelper.ExecuteDataset(ConnectionString, "USP_GetRestaurant", parameters2);
 
-                List<Restaurant> restaurants = new();
+                var ds2 = SqlHelper.ExecuteDataset(ConnectionString, "USP_GetDiningTableFromRestaurantId", parameters2);
+
+                List<DiningTable> DiningTables = new();
                 if (ds2 != null && ds2.Tables.Count > 0)
-                    restaurants = DataAccessHelper.ConvertToList<Restaurant>(ds2.Tables[0]);
+                    DiningTables = DataAccessHelper.ConvertToList<DiningTable>(ds2.Tables[0]);
 
                 response.IsSuccessFull = true;
-                response.Restaurants = restaurants;
+                response.DiningTables = DiningTables;
             }
             catch (Exception ex)
             {

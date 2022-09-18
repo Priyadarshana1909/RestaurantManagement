@@ -1,0 +1,139 @@
+﻿@model RestaurantDTO.Request.AddUpdateOrder
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit Order</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RestaurantID" class="control-label"></label>
+                <select asp-for="RestaurantID"
+                        class="form-control"
+                        asp-items="@(new SelectList(Model.Restaurants,"RestaurantID", "RestaurantName"))">
+                </select>
+                <span asp-validation-for="RestaurantID" class="text-danger"></span>
+            </div>
+
+             <div class="form-group">
+                <label asp-for="MenuItemID" class="control-label"></label>
+                <select asp-for="MenuItemID"
+                        class="form-control"
+                        asp-items="@(new SelectList(Model.MenuItems,"MenuItemID", "ItemName"))">
+                </select>
+                <span asp-validation-for="MenuItemID" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DiningTableID" class="control-label"></label>
+                <select asp-for="DiningTableID"
+                        class="form-control"
+                        asp-items="@(new SelectList(Model.DiningTables,"DiningTableID", "Location"))">
+                </select>
+                <span asp-validation-for="DiningTableID" class="text-danger"></span>
+            </div>
+
+             <div class="form-group">
+                <label asp-for="ItemQuantity" class="control-label"></label>
+                <input asp-for="ItemQuantity" class="form-control" />
+                <span asp-validation-for="ItemQuantity" class="text-danger"></span>
+            </div>
+           <div class="form-group" style="display:none;">
+                <label asp-for="OrderID" class="control-label"></label>
+                <input asp-for="OrderID" class="form-control" />
+                <span asp-validation-for="OrderID" class="text-danger"></span>
+            </div>
+
+             <div class="form-group" style="display:none;">
+                <label asp-for="OrderDate" class="control-label"></label>
+                <input asp-for="OrderDate" class="form-control" />
+                <span asp-validation-for="OrderDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Edit" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+
+<script type="text/javascript">
+    $(function () {
+         $("select#RestaurantID").change(function ()
+         {
+             var restaurantId = $(this).val();
+
+              $("#MenuItemID").empty();
+              $('#DiningTableID').empty();
+              $.ajax({
+                    type: "GET",
+                    url: "/Order/GetMenuItems/",
+                    async : false,
+                     data: { "RestaurantId": restaurantId },
+                    success: function (response) {
+                      
+                        $.each(response.menuItems, function (i, menuItem) {  
+                          
+                            $("#MenuItemID").append('<option value="' + menuItem.menuItemID + '">' +    
+                                 menuItem.itemName + '</option>');                                                                                                  
+                            // here we are adding option for States  
+   
+                            });  
+                    },
+                    failure: function (response) {
+                       
+                         alert(response);
+                       // alert(response.responseText);
+                    },
+                    error: function (response) {
+                       
+                         alert(response);
+                       // alert(response.responseText);
+                   }
+                });
+
+                 $.ajax({
+                    type: "GET",
+                    url: "/Order/GetDiningTables/",
+                    async : false,
+                     data: { "RestaurantId": restaurantId },
+                    success: function (response) {
+                      debugger;
+                        $.each(response.diningTables, function (i, diningTable) {  
+                          
+                            $("#DiningTableID").append('<option value="' + diningTable.diningTableID + '">' +    
+                                 diningTable.location + '</option>');                                                                                                  
+                            // here we are adding option for States  
+   
+                            });  
+                    },
+                    failure: function (response) {
+                       
+                         alert(response);
+                       // alert(response.responseText);
+                    },
+                    error: function (response) {
+                       
+                         alert(response);
+                       // alert(response.responseText);
+                   }
+                });
+           
+         });
+     });
+</script>
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
