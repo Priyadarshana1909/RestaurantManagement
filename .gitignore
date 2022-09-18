@@ -18,3 +18,9 @@
 /RestaurantUtilities/obj/Debug/net6.0
 /RestaurantUtilities/obj
 /RestaurantWebAPI/bin/Debug/net6.0
+/TestCases/RestaurantBLLTest/bin/Debug/net6.0
+/TestCases/RestaurantBLLTest/obj
+/TestCases/RestaurantWebAPITest/bin/Debug/net6.0
+/TestCases/RestaurantWebAPITest/obj
+/TestCases/RestaurantWebApplicationTest/bin/Debug/net6.0
+/TestCases/RestaurantWebApplicationTest/obj
