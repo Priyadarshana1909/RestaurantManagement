@@ -20,6 +20,7 @@ namespace RestaurantWebAPI.Extensions
 
         public static IServiceCollection AddDAL(this IServiceCollection services)
         {
+            services.AddTransient<IManageReportDAL, ManageReportDAL>();
             services.AddTransient<IManageBillDAL, ManageBillDAL>();
             services.AddTransient<IManageDiningTableDAL, ManageDiningTableDAL>();
             services.AddTransient<IManageOrderDAL, ManageOrderDAL>();
@@ -32,6 +33,7 @@ namespace RestaurantWebAPI.Extensions
 
         public static IServiceCollection AddBLL(this IServiceCollection services)
         {
+            services.AddTransient<IManageReportBLL, ManageReportBLL>();
             services.AddTransient<IManageBillBLL, ManageBillBLL>();
             services.AddTransient<IManageDiningTableBLL, ManageDiningTableBLL>();
             services.AddTransient<IManageOrderBLL, ManageOrderBLL>();

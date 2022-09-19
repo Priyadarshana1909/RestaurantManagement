@@ -7,6 +7,7 @@ namespace RestaurantDTO.Request
     {
         public int CustomerId { get; set; }
 
+        [Display(Name = "Restaurant Name")]
         [Required]
         public int RestaurantId { get; set; }
 

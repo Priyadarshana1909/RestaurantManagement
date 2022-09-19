@@ -1,0 +1,75 @@
+﻿@model IEnumerable<RestaurantDTO.Response.CustomerReport>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Dynamic Customer Report</h1>
+<div id ="divMessage" style="display:none;"></div>
+@if (TempData["Message"] != null && Convert.ToString(TempData["Message"]).ToLower().Contains("success"))
+{
+    <div class="alert alert-success">@Convert.ToString(TempData["Message"])</div>
+}
+else @if (TempData["Message"] != null)
+{
+    <div class="alert alert-danger">@Convert.ToString(TempData["Message"])</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerName)
+            </th>             
+            <th>
+                @Html.DisplayNameFor(model => model.DiningTableID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemQuantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderAmount)
+            </th>
+             <th>
+                @Html.DisplayNameFor(model => model.OrderDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CustomerName)
+                </td>
+               
+                <td>
+                    @Html.DisplayFor(modelItem => item.DiningTableID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemQuantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderAmount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDate)
+                </td>
+               
+            </tr>
+        }
+    </tbody>
+</table>
