@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestaurantBLL.Interface;
+using RestaurantDTO.Request;
 using RestaurantDTO.Response;
 
 namespace RestaurantWebAPI.Controllers
@@ -23,6 +24,13 @@ namespace RestaurantWebAPI.Controllers
             return response;
         }
 
-        
+        [HttpPost]
+        [Route("SearchReport")]
+        public async Task<ActionResult<ReportResponse>> SearchReport(SearchReport searchReport)
+        {
+            var response = _manageReportBLL.SearchReport(searchReport);
+            return response;
+        }
+
     }
 }

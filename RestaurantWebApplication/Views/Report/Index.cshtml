@@ -5,7 +5,7 @@
 }
 
 <h1>Dynamic Customer Report</h1>
-<div id ="divMessage" style="display:none;"></div>
+<div id="divMessage" style="display:none;"></div>
 @if (TempData["Message"] != null && Convert.ToString(TempData["Message"]).ToLower().Contains("success"))
 {
     <div class="alert alert-success">@Convert.ToString(TempData["Message"])</div>
@@ -14,62 +14,121 @@ else @if (TempData["Message"] != null)
 {
     <div class="alert alert-danger">@Convert.ToString(TempData["Message"])</div>
 }
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <label for="txtCustomerId" class="form-label font-bold">Customer ID</label>
+            <input type="number" id="txtCustomerId" class="form-control" />
+        </div>
+        <div class="col-sm">
+            <label for="txtCustomerName" class="form-label font-bold">Customer Name</label>
+            <input type="text" id="txtCustomerName" class="form-control" />
+        </div>
+        <div class="col-sm">
+            <label for="txtRestaurantId" class="form-label font-bold">Restaurant ID</label>
+            <input type="number" id="txtRestaurantId" class="form-control" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <label for="txtDiningTableId" class="form-label font-bold">Dining Table ID</label>
+            <input type="number" id="txtDiningTableId" class="form-control" />
+        </div>
+        <div class="col-sm">
+            <label for="txtOrderId" class="form-label font-bold">Order ID</label>
+            <input type="number" id="txtOrderId" class="form-control" />
+        </div>
+        <div class="col-sm">
+            <label for="txtLocation" class="form-label font-bold">Location</label>
+            <input type="text" id="txtLocation" class="form-control" />
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <label for="txtQuantity1" class="form-label font-bold">Item Quantity1</label>
+            <input type="number" id="txtQuantity1" class="form-control" />
+        </div>
+        <div class="col-sm">
+            <label for="txtQuantity2" class="form-label font-bold">Item Quantity2</label>
+            <input type="number" id="txtQuantity2" class="form-control" />
+        </div>        
+        <div class="col-sm">
+            <label for="txtAmount1" class="form-label font-bold">Order Amount1</label>
+            <input type="number" min="0.00" max="10000.00" step="0.01" id="txtAmount1" class="form-control" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <label for="txtAmount2" class="form-label font-bold">Order Amount2</label>
+            <input type="number" min="0.00" max="10000.00" step="0.01" id="txtAmount2" class="form-control" />
+        </div>
+        <div class="col-sm">
+            <label for="txtOrderDate" class="form-label font-bold">Order Date</label>
+            <input type="date" name="begin" placeholder="dd-mm-yyyy" id ="txtOrderDate" class="form-control" value="" min="1997-01-01" max="2030-12-31">
+        </div>        
+       <div class="col-sm">
+            <label for="txtOrderDateFrom" class="form-label font-bold">Order Date From</label>
+            <input type="date" name="begin" placeholder="dd-mm-yyyy" id ="txtOrderDateFrom" class="form-control" value="" min="1997-01-01" max="2030-12-31">
+        </div> 
+    </div>
+    <div class="row">        
+        <div class="col-sm">
+            <label for="txtOrderDateTo" class="form-label font-bold">Order Date To</label>
+            <input type="date" name="begin" placeholder="dd-mm-yyyy" id ="txtOrderDateTo" class="form-control" value="" min="1997-01-01" max="2030-12-31">
+        </div>  
+         <div class="col-sm">
+            <label for="txtSortBy" class="form-label font-bold">Sort By</label>
+            <select name="SortBy" id="txtSortBy" class="form-control">
+                <option value="">Select Sorting</option>    
+                <option value="CustomerName">Customer Name</option>                
+                <option value="DiningTableID">DiningTableID</option>
+                <option value="Location">Location</option>
+                <option value="OrderID">OrderID</option>
+                <option value="OrderAmount">Order Amount</option>
+                <option value="OrderDate">Order Date</option>
+            </select>
+        </div>  
+        
+        <div class="col-sm" style="margin-top:30px;">
+            <input type="button" value="Search" class="btn btn-primary" id="btnSearch" />
+        </div>
+    </div>
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CustomerName)
-            </th>             
-            <th>
-                @Html.DisplayNameFor(model => model.DiningTableID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Location)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ItemQuantity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderAmount)
-            </th>
-             <th>
-                @Html.DisplayNameFor(model => model.OrderDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CustomerName)
-                </td>
-               
-                <td>
-                    @Html.DisplayFor(modelItem => item.DiningTableID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Location)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ItemQuantity)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderAmount)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderDate)
-                </td>
-               
-            </tr>
-        }
-    </tbody>
-</table>
+<br />
+<div id="divPartial">
+     @Html.Partial("_SearchCustomer",Model)
+</div>
+@section Scripts
+{
+<script type="text/javascript">
+     $(document).ready(function() 
+     {
+         $("#btnSearch").click(function() 
+         {
+             var searchReport = { CustomerID : $('#txtCustomerId').val(), CustomerName:$('#txtCustomerName').val(), RestaurantID : $('#txtRestaurantId').val(), DiningTableID : $('#txtDiningTableId').val(), OrderID : $('#txtOrderId').val(), Location : $('#txtLocation').val(), ItemQuantity1 : $('#txtQuantity1').val(),  ItemQuantity2 : $('#txtQuantity2').val(), OrderAmount1 : $('#txtAmount1').val(), OrderAmount2 : $('#txtAmount2').val(), OrderDate : $('#txtOrderDate').val(), OrderDateFrom : $('#txtOrderDateFrom').val(), OrderDateTo : $('#txtOrderDateTo').val(), SortBy : $('#txtSortBy').val()};
+             $('#divPartial').html(''); 
+             $.ajax({
+                 type: "POST",
+                 url: '/Report/SearchCustomer',     //your action
+                 data: searchReport,   //your form name.it takes all the values of model               
+                 dataType: 'html',
+                 async: false,
+                 success: function (result) {
+                   
+                    $('#divPartial').html(result);
+                 }
+             })
+         });
+    });
+    //$(function() {
+    //    var format1 = moment($("#txtOrderDate").val()).format('YYYY-MM-DD');
+  
+    //        $("#txtOrderDate").text(format1);
+    //});
+</script>
+}
+
+
+

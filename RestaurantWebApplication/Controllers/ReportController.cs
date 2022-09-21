@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RestaurantDTO.Request;
 using RestaurantDTO.Response;
 using RestaurantWebApplication.Services.Interface;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace RestaurantWebApplication.Controllers
 {
@@ -28,8 +31,34 @@ namespace RestaurantWebApplication.Controllers
             }
             return View(new List<CustomerReport>());
         }
-        #endregion    
-        
+
+        [HttpPost]
+        public async Task<PartialViewResult> SearchCustomer(SearchReport searchReport)
+        {
+
+            // setup customize formatter for date time converter
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            IsoDateTimeConverter dateConverter = new IsoDateTimeConverter
+            {
+                DateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.fff"
+            };
+            settings.Converters.Add(dateConverter);
+
+            var json = JsonConvert.SerializeObject(searchReport, settings);
+
+            var response = await _apiService.ExecuteRequest<ReportResponse>("Report/SearchReport", HttpMethod.Post, json);
+
+            if (response != null && response.IsSuccessFull)
+            {
+                return PartialView("_SearchCustomer", response.CustomerReports);
+            }
+            return PartialView("_SearchCustomer", new List<CustomerReport>());
+        }
+
+        #endregion
+
+      
+
         #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using RestaurantDTO.Response;
+﻿using RestaurantDTO.Request;
+using RestaurantDTO.Response;
 
 namespace RestaurantBLL.Interface
 {
@@ -6,6 +7,6 @@ namespace RestaurantBLL.Interface
     {
         ReportResponse GetReport(int? CustomerID);
 
-      
+        ReportResponse SearchReport(SearchReport searchReport);
     }
 }

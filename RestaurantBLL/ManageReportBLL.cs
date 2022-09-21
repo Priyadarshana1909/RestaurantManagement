@@ -1,5 +1,6 @@
 ﻿using RestaurantBLL.Interface;
 using RestaurantDAL.Interface;
+using RestaurantDTO.Request;
 using RestaurantDTO.Response;
 
 namespace RestaurantBLL
@@ -18,6 +19,10 @@ namespace RestaurantBLL
             return _manageReportDAL.GetReport(CustomerID);
         }
 
-      
+        public ReportResponse SearchReport(SearchReport searchReport)
+        {
+            return _manageReportDAL.SearchReport(searchReport);
+        }
+        
     }
 }
