@@ -6,15 +6,18 @@ using System.Data;
 
 namespace RestaurantDAL
 {
+    /// <summary>
+    /// Manage cuisine DAL
+    /// </summary>
     public class ManageCuisineDAL : IManageCuisineDAL
     {
         private static string ConnectionString = Common.GetConnectionString();
 
-        //public BaseResponse AddUpdateCuisine(AddUpdateCuisine addUpdateCuisine)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
+        /// <summary>
+        /// Add / update / delete cuisine
+        /// </summary>
+        /// <param name="addUpdateCuisine"></param>
+        /// <returns></returns>
         public BaseResponse AddUpdateCuisine(AddUpdateCuisine addUpdateCuisine)
         {
             var response = new BaseResponse();
@@ -44,6 +47,11 @@ namespace RestaurantDAL
             return response;
         }
 
+        /// <summary>
+        /// Get cuisines based in cuisine id
+        /// </summary>
+        /// <param name="CuisineId">CuisineId</param>
+        /// <returns></returns>
         public CuisineResponse GetCuisines(int? CuisineId)
         {
             var response = new CuisineResponse { IsSuccessFull = false };
@@ -55,12 +63,17 @@ namespace RestaurantDAL
                 parameters2[0] = new SqlParameter("@CuisineID", CuisineId);
                
                 var ds2 = SqlHelper.ExecuteDataset(ConnectionString, "USP_GetCuisine", parameters2);
-                List<Cuisine> cuisines = new();
-                if (ds2 != null && ds2.Tables.Count > 0)
-                    cuisines = DataAccessHelper.ConvertToList<Cuisine>(ds2.Tables[0]);
-
-                response.IsSuccessFull = true;
-                response.Cuisines = cuisines;
+               
+                if (ds2?.Tables != null && ds2.Tables.Count > 0)
+                {
+                    var cuisines = DataAccessHelper.ConvertToList<Cuisine>(ds2.Tables[0]);
+                    response.IsSuccessFull = true;
+                    response.Cuisines = cuisines;
+                }
+                else
+                {
+                    response.ErrorMessage = "Invalid cuisine id";
+                }
             }
             catch (Exception ex)
             {
@@ -69,7 +82,5 @@ namespace RestaurantDAL
             }
             return response;
         }
-
-       
     }
 }

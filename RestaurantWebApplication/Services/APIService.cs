@@ -3,12 +3,21 @@ using RestSharp;
 
 namespace RestaurantWebApplication.Services
 {
+    /// <summary>
+    /// API Service
+    /// </summary>
     public class APIService : IAPIService
     {
         private IRestClient _restclient;
         private IRestRequest _restRequest;
         protected IConfiguration _configuration { get; set; }
 
+        /// <summary>
+        /// Constructor of dependacy resolver
+        /// </summary>
+        /// <param name="restclient"></param>
+        /// <param name="restRequest"></param>
+        /// <param name="Configuration"></param>
         public APIService(IRestClient restclient, IRestRequest restRequest, IConfiguration Configuration)
         {
             _restclient = restclient;
@@ -16,6 +25,15 @@ namespace RestaurantWebApplication.Services
             _configuration = Configuration;
         }
 
+        #region Generic Execute Request Method
+        /// <summary>
+        /// Generic method to communicate with web api
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="uri">Web API Endpoint Url</param>
+        /// <param name="method">Http method type</param>
+        /// <param name="requestObject">Request Object</param>
+        /// <returns></returns>
         public async Task<T> ExecuteRequest<T>(string uri, HttpMethod method, object? requestObject = null)
         {
             try
@@ -40,7 +58,9 @@ namespace RestaurantWebApplication.Services
                 throw ex;
             }
         }
+        #endregion
 
+        #region Private methods
         private Method GetRestClientMethod(HttpMethod method)
         {
             var httpMethod = method.ToString().ToLower();
@@ -99,5 +119,6 @@ namespace RestaurantWebApplication.Services
                 }
             }
         }
+        #endregion
     }
 }

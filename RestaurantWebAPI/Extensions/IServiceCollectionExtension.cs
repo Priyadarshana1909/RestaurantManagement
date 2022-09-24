@@ -5,10 +5,15 @@ using RestaurantDAL.Interface;
 
 namespace RestaurantWebAPI.Extensions
 {
+    /// <summary>
+    /// Service collection extension
+    /// used in resolving dependancy in start up
+    /// </summary>
     public static class IServiceCollectionExtension
     {
+        #region Http Context
         /// <summary>
-        /// 
+        /// Extension method for adding context
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -17,7 +22,14 @@ namespace RestaurantWebAPI.Extensions
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             return services;
         }
+        #endregion
 
+        #region "DAL"
+        /// <summary>
+        /// Extension method for resolving DAL dependancy
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
         public static IServiceCollection AddDAL(this IServiceCollection services)
         {
             services.AddTransient<IManageReportDAL, ManageReportDAL>();
@@ -30,7 +42,14 @@ namespace RestaurantWebAPI.Extensions
             services.AddTransient<IManageCustomerDAL, ManageCustomerDAL>();
             return services;
         }
+        #endregion
 
+        #region "BLL"
+        /// <summary>
+        /// Extension method for resolving BLL dependancy
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
         public static IServiceCollection AddBLL(this IServiceCollection services)
         {
             services.AddTransient<IManageReportBLL, ManageReportBLL>();
@@ -43,5 +62,6 @@ namespace RestaurantWebAPI.Extensions
             services.AddTransient<IManageCustomerBLL, ManageCustomerBLL>();
             return services;
         }
+        #endregion
     }
 }

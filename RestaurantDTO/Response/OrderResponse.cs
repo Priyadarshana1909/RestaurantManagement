@@ -25,7 +25,7 @@ namespace RestaurantDTO.Response
         public double ItemPrice { get; set; }
 
         [Display(Name = "Order Amount")]
-        public double OrderAmount { get; set; }
+        public double? OrderAmount { get; set; }
 
         public int DiningTableID { get; set; }
 

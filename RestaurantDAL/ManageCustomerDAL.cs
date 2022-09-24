@@ -6,9 +6,18 @@ using System.Data;
 
 namespace RestaurantDAL
 {
+    /// <summary>
+    /// Mange customer dal
+    /// </summary>
     public class ManageCustomerDAL : IManageCustomerDAL
     {
         private static string ConnectionString = Common.GetConnectionString();
+
+        /// <summary>
+        /// Get customer details based on customer id
+        /// </summary>
+        /// <param name="CustomerID">CustomerID</param>
+        /// <returns></returns>
         public CustomerResponse GetCustomers(int? CustomerID)
         {
             var response = new CustomerResponse { IsSuccessFull = false };
@@ -21,12 +30,17 @@ namespace RestaurantDAL
                
                 var ds2 = SqlHelper.ExecuteDataset(ConnectionString, "USP_GetCustomer", parameters2);
 
-                List<Customer> Customers = new();
-                if (ds2 != null && ds2.Tables.Count > 0)
-                    Customers = DataAccessHelper.ConvertToList<Customer>(ds2.Tables[0]);
 
-                response.IsSuccessFull = true;
-                response.Customers = Customers;
+                if (ds2?.Tables != null && ds2.Tables.Count > 0)
+                {
+                    var Customers = DataAccessHelper.ConvertToList<Customer>(ds2.Tables[0]);
+                    response.IsSuccessFull = true;
+                    response.Customers = Customers;
+                }
+                else
+                {
+                    response.ErrorMessage = "Invalid customer id";
+                }
             }
             catch (Exception ex)
             {
@@ -36,6 +50,11 @@ namespace RestaurantDAL
             return response;
         }
 
+        /// <summary>
+        /// Add / update / delete customer
+        /// </summary>
+        /// <param name="AddUpdateCustomer">AddUpdateCustomer</param>
+        /// <returns></returns>
         public BaseResponse AddUpdateCustomer(AddUpdateCustomer AddUpdateCustomer)
         {
             var response = new BaseResponse();

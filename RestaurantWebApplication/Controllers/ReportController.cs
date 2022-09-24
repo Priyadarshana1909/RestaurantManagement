@@ -23,13 +23,7 @@ namespace RestaurantWebApplication.Controllers
         #region "Index"
         public async Task<IActionResult> Index()
         {
-            var response = await _apiService.ExecuteRequest<ReportResponse>("Report/GetReport", HttpMethod.Get, null);
-
-            if (response != null && response.IsSuccessFull)
-            {
-                return View(response.CustomerReports);
-            }
-            return View(new List<CustomerReport>());
+           return View(new List<CustomerReport>());
         }
 
         [HttpPost]

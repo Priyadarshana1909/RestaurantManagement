@@ -4,10 +4,18 @@ using RestaurantDTO.Response;
 
 namespace RestaurantDAL
 {
+    /// <summary>
+    /// Manage restaurant DAL
+    /// </summary>
     public class ManageRestaurantDAL : IManageRestaurantDAL
     {
         private static string ConnectionString = Common.GetConnectionString();
         
+        /// <summary>
+        /// Get restaurants details based on restaurant id
+        /// </summary>
+        /// <param name="RestaurantId"></param>
+        /// <returns></returns>
         public RestaurantResponse GetRestaurants(int? RestaurantId)
         {
             var response = new RestaurantResponse { IsSuccessFull = false };
@@ -20,12 +28,16 @@ namespace RestaurantDAL
                
                 var ds2 = SqlHelper.ExecuteDataset(ConnectionString, "USP_GetRestaurant", parameters2);
 
-                List<Restaurant> restaurants = new();
-                if (ds2 != null && ds2.Tables.Count > 0)
-                    restaurants = DataAccessHelper.ConvertToList<Restaurant>(ds2.Tables[0]);
-
-                response.IsSuccessFull = true;
-                response.Restaurants = restaurants;
+                if (ds2?.Tables != null && ds2.Tables.Count > 0)
+                {
+                    var restaurants = DataAccessHelper.ConvertToList<Restaurant>(ds2.Tables[0]);
+                    response.IsSuccessFull = true;
+                    response.Restaurants = restaurants;
+                }
+                else
+                {
+                    response.ErrorMessage = "Invalid restaurant id";
+                }
             }
             catch (Exception ex)
             {

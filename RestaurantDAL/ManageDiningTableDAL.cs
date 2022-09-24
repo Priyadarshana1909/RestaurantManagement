@@ -4,10 +4,18 @@ using RestaurantDTO.Response;
 
 namespace RestaurantDAL
 {
+    /// <summary>
+    /// Manage dining table dal
+    /// </summary>
     public class ManageDiningTableDAL : IManageDiningTableDAL
     {
         private static string ConnectionString = Common.GetConnectionString();
 
+        /// <summary>
+        /// Get dining table from restaurant id
+        /// </summary>
+        /// <param name="RestaurantId">RestaurantId</param>
+        /// <returns></returns>
         public DiningTableResponse GetDiningTablesFromRestaurantId(int RestaurantId)
         {
             var response = new DiningTableResponse { IsSuccessFull = false };

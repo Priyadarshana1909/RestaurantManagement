@@ -5,6 +5,9 @@ using RestaurantDTO.Response;
 
 namespace RestaurantBLL
 {
+    /// <summary>
+    /// Manage report bll
+    /// </summary>
     public class ManageReportBLL : IManageReportBLL
     {
         private readonly IManageReportDAL _manageReportDAL;
@@ -14,11 +17,11 @@ namespace RestaurantBLL
             _manageReportDAL = manageReportDAL;
         }
 
-        public ReportResponse GetReport(int? CustomerID)
-        {
-            return _manageReportDAL.GetReport(CustomerID);
-        }
-
+        /// <summary>
+        /// Search customer report
+        /// </summary>
+        /// <param name="searchReport"></param>
+        /// <returns></returns>
         public ReportResponse SearchReport(SearchReport searchReport)
         {
             return _manageReportDAL.SearchReport(searchReport);

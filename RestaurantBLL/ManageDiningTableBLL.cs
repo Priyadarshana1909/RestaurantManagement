@@ -4,6 +4,9 @@ using RestaurantDTO.Response;
 
 namespace RestaurantBLL
 {
+    /// <summary>
+    /// Manage dining table dll
+    /// </summary>
     public class ManageDiningTableBLL : IManageDiningTableBLL
     {
 
@@ -14,6 +17,11 @@ namespace RestaurantBLL
             _manageDiningTableDAL = manageDiningTableDAL;
         }
 
+        /// <summary>
+        /// Get dining table details restaurant id wise
+        /// </summary>
+        /// <param name="RestaurantId"></param>
+        /// <returns></returns>
         public DiningTableResponse GetDiningTablesFromRestaurantId(int RestaurantId)
         {
             return _manageDiningTableDAL.GetDiningTablesFromRestaurantId(RestaurantId);

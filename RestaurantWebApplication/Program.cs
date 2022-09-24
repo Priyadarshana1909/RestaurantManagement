@@ -1,14 +1,15 @@
-using RestaurantWebApplication.Services;
-using RestaurantWebApplication.Services.Interface;
-using RestSharp;
+using RestaurantWebApplication.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddTransient<IRestClient, RestClient>();
-builder.Services.AddTransient<IRestRequest, RestRequest>();
-builder.Services.AddTransient<IAPIService, APIService>();
+
+//Project Dependancy resolver
+builder.Services.AddRestClientAndAPIService();
+//Project Dependancy resolver
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

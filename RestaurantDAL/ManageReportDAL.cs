@@ -2,14 +2,21 @@
 using RestaurantDAL.Interface;
 using RestaurantDTO.Request;
 using RestaurantDTO.Response;
-using System.Data;
 
 namespace RestaurantDAL
 {
+    /// <summary>
+    /// Manage Report DAL
+    /// </summary>
     public class ManageReportDAL : IManageReportDAL
     {
         private static string ConnectionString = Common.GetConnectionString();
 
+        /// <summary>
+        /// Search report
+        /// </summary>
+        /// <param name="searchReport">searchReport</param>
+        /// <returns></returns>
         public ReportResponse SearchReport(SearchReport searchReport)
         {
             var response = new ReportResponse { IsSuccessFull = false };
@@ -17,7 +24,6 @@ namespace RestaurantDAL
             {
 
                 SqlParameter[] parameters2 = new SqlParameter[14];
-                //var rowCount = 0;
                 parameters2[0] = new SqlParameter("@CustomerID", searchReport.CustomerID);
                 parameters2[1] = new SqlParameter("@CustomerName", searchReport.CustomerName);
                 parameters2[2] = new SqlParameter("@RestaurantID", searchReport.RestaurantID);
@@ -60,15 +66,12 @@ namespace RestaurantDAL
                 }
                 parameters2[13] = new SqlParameter("@SortBy", searchReport.SortBy);
 
-
-
-                //SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure, "USP_GetCustomerDynamically", parameters2);
-
                 var ds2 = SqlHelper.ExecuteDataset(ConnectionString, "USP_GetCustomerDynamically", parameters2);
                 List<CustomerReport> customers = new();
-                if (ds2 != null && ds2.Tables.Count > 0)
+                if (ds2?.Tables != null && ds2.Tables.Count > 0)
+                {
                     customers = DataAccessHelper.ConvertToList<CustomerReport>(ds2.Tables[0]);
-
+                }
                 response.IsSuccessFull = true;
                 response.CustomerReports = customers;
             }
@@ -79,32 +82,6 @@ namespace RestaurantDAL
             }
             return response;
         }
-        public ReportResponse GetReport(int? CustomerID)
-        {
-            var response = new ReportResponse { IsSuccessFull = false };
-            try
-            {
-               
-                SqlParameter[] parameters2 = new SqlParameter[1];
-
-                parameters2[0] = new SqlParameter("@CustomerID", CustomerID);
-               
-                var ds2 = SqlHelper.ExecuteDataset(ConnectionString, "USP_GetCustomerDynamically", parameters2);
-
-                List<CustomerReport> customers = new();
-                if (ds2 != null && ds2.Tables.Count > 0)
-                    customers = DataAccessHelper.ConvertToList<CustomerReport>(ds2.Tables[0]);
-
-                response.IsSuccessFull = true;
-                response.CustomerReports = customers;
-            }
-            catch (Exception ex)
-            {
-                response.IsSuccessFull = false;
-                response.ErrorMessage = ex.Message;
-            }
-            return response;       }
-
-        
+             
     }
 }

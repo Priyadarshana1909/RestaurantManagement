@@ -4,6 +4,9 @@ using RestaurantDTO.Response;
 
 namespace RestaurantBLL
 {
+    /// <summary>
+    /// Manage menu item bll
+    /// </summary>
     public class ManageMenuItemBLL : IManageMenuItemBLL
     {
         private IManageMenuItemDAL _manageMenuItemDAL;
@@ -13,6 +16,11 @@ namespace RestaurantBLL
             _manageMenuItemDAL = manageMenuItemDAL;
         }
 
+        /// <summary>
+        /// Get menu item details - restautant id wise
+        /// </summary>
+        /// <param name="RestaurantId"></param>
+        /// <returns></returns>
         public MenuItemResponse GetMenuItems(int RestaurantId)
         {
             return _manageMenuItemDAL.GetMenuItemFromRestaurantId(RestaurantId);

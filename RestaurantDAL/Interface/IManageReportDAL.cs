@@ -5,8 +5,6 @@ namespace RestaurantDAL.Interface
 {
     public interface IManageReportDAL
     {
-        ReportResponse GetReport(int? CustomerID);
-
         ReportResponse SearchReport(SearchReport searchReport);
     }
 }
