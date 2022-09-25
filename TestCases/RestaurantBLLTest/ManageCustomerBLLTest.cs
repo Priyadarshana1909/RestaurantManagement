@@ -8,65 +8,66 @@ using RestaurantDTO.Response;
 namespace RestaurantBLLTest
 {
     [TestClass]
-    public class ManageCuisineBLLTest
+    public class ManageCustomerBLLTest
     {
-        private readonly Mock<IManageCuisineDAL> _mockManageCuisineDAL;
+        private readonly Mock<IManageCustomerDAL> _mockManageCustomerDAL;
 
-        public ManageCuisineBLLTest()
+        public ManageCustomerBLLTest()
         {
-            _mockManageCuisineDAL = new Mock<IManageCuisineDAL>();
+            _mockManageCustomerDAL = new Mock<IManageCustomerDAL>();
         }
 
         [TestMethod]
-        public void ManageCuisineBLLTest_GetCuisines_SuccessResponse()
+        public void ManageCustomerBLLTest_GetCustomer_SuccessResponse()
         {
-            var response = new CuisineResponse();
+            var response = new CustomerResponse();
             response.IsSuccessFull = true;
 
-            _mockManageCuisineDAL.Setup(x => x.GetCuisines(It.IsAny<int?>())).Returns(response);
+            _mockManageCustomerDAL.Setup(x => x.GetCustomers(It.IsAny<int?>())).Returns(response);
 
-            ManageCuisineBLL ManageCuisineBLL = new ManageCuisineBLL(_mockManageCuisineDAL.Object);
-            var CuisineResponse = ManageCuisineBLL.GetCuisines(0);
-            Assert.AreEqual(response.Cuisines.Count, CuisineResponse?.Cuisines.Count);
+            ManageCustomerBLL ManageCustomerBLL = new ManageCustomerBLL(_mockManageCustomerDAL.Object);
+            var CustomerResponse = ManageCustomerBLL.GetCustomers(0);
+            Assert.AreEqual(CustomerResponse.IsSuccessFull, response.IsSuccessFull);
+            Assert.IsTrue(CustomerResponse.IsSuccessFull);
         }
 
         [TestMethod]
         public void ManageCuisineBLLTest_GetCuisines_FailResponse()
         {
-            var response = new CuisineResponse();
+            var response = new CustomerResponse();
             response.IsSuccessFull = false;
 
-            _mockManageCuisineDAL.Setup(x => x.GetCuisines(It.IsAny<int?>())).Returns(response);
+            _mockManageCustomerDAL.Setup(x => x.GetCustomers(It.IsAny<int?>())).Returns(response);
 
-            ManageCuisineBLL ManageCuisineBLL = new ManageCuisineBLL(_mockManageCuisineDAL.Object);
-            var CuisineResponse = ManageCuisineBLL.GetCuisines(0);
-            Assert.AreEqual(response.IsSuccessFull, CuisineResponse?.IsSuccessFull);
+            ManageCustomerBLL ManageCustomerBLL = new ManageCustomerBLL(_mockManageCustomerDAL.Object);
+            var CustomerResponse = ManageCustomerBLL.GetCustomers(0);
+            Assert.AreEqual(response.IsSuccessFull, CustomerResponse?.IsSuccessFull);
         }
 
         [TestMethod]
-        public void ManageCuisineBLL_AddUpdateCuisine_SuccessResponse()
+        public void ManageCuisineBLL_AddUpdateCustomer_SuccessResponse()
         {
-            var response = new CuisineResponse();
+            var response = new CustomerResponse();
             response.IsSuccessFull = true;
 
-            _mockManageCuisineDAL.Setup(x => x.AddUpdateCuisine(It.IsAny<AddUpdateCuisine>())).Returns(response);
+            _mockManageCustomerDAL.Setup(x => x.AddUpdateCustomer(It.IsAny<AddUpdateCustomer>())).Returns(response);
 
-            ManageCuisineBLL ManageCuisineBLL = new ManageCuisineBLL(_mockManageCuisineDAL.Object);
-            var CuisineResponse = ManageCuisineBLL.AddUpdateCuisine(new AddUpdateCuisine());
-            Assert.AreEqual(response.IsSuccessFull, CuisineResponse?.IsSuccessFull);
+            ManageCustomerBLL ManageCuisineBLL = new ManageCustomerBLL(_mockManageCustomerDAL.Object);
+            var CustomerResponse = ManageCuisineBLL.AddUpdateCustomer(new AddUpdateCustomer());
+            Assert.AreEqual(response.IsSuccessFull, CustomerResponse?.IsSuccessFull);
         }
 
         [TestMethod]
         public void ManageCuisineBLL_AddUpdateCuisine_FailResponse()
         {
-            var response = new CuisineResponse();
+            var response = new CustomerResponse();
             response.IsSuccessFull = false;
 
-            _mockManageCuisineDAL.Setup(x => x.AddUpdateCuisine(It.IsAny<AddUpdateCuisine>())).Returns(response);
+            _mockManageCustomerDAL.Setup(x => x.AddUpdateCustomer(It.IsAny<AddUpdateCustomer>())).Returns(response);
 
-            ManageCuisineBLL ManageCuisineBLL = new ManageCuisineBLL(_mockManageCuisineDAL.Object);
-            var CuisineResponse = ManageCuisineBLL.AddUpdateCuisine(new AddUpdateCuisine());
-            Assert.AreEqual(response.IsSuccessFull, CuisineResponse?.IsSuccessFull);
+            ManageCustomerBLL ManageCuisineBLL = new ManageCustomerBLL(_mockManageCustomerDAL.Object);
+            var CustomerResponse = ManageCuisineBLL.AddUpdateCustomer(new AddUpdateCustomer());
+            Assert.AreEqual(response.IsSuccessFull, CustomerResponse?.IsSuccessFull);
         }
     }
 }

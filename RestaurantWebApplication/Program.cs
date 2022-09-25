@@ -2,7 +2,7 @@ using RestaurantWebApplication.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Use ConfigureServices method to Add services to the container.
 builder.Services.AddControllersWithViews();
 
 //Project Dependancy resolver
@@ -12,7 +12,7 @@ builder.Services.AddRestClientAndAPIService();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Use Configure method to Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
