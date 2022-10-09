@@ -37,7 +37,9 @@ namespace RestaurantDAL
                 };
 
                 SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure, "USP_Cuisine", parameters2);
-                response.IsSuccessFull = true;
+
+                if (Convert.ToInt32(parameters2[4].Value) > 0)
+                    response.IsSuccessFull = true;
             }
             catch (Exception ex)
             {

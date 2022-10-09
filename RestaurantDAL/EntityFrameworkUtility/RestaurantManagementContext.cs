@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace RestaurantDAL.EntityFrameworkUtility
 {
@@ -9,6 +8,27 @@ namespace RestaurantDAL.EntityFrameworkUtility
         {
         }
 
-       
+        public RestaurantManagementContext()
+        {
+
+        }
+
+      
+
+        public DbSet<Restaurant> Restaurant { get; set; }
+
+        public DbSet<RestaurantMenuItem> RestaurantMenuItem { get; set; }
+
+        public DbSet<Order> Order { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            //var configuration = new ConfigurationBuilder()
+            //    .SetBasePath(Directory.GetCurrentDirectory())
+            //    .AddJsonFile("appsettings.json")
+            //    .Build();
+
+            //optionsBuilder.AddDbContext<RestaurantManagementContext>(x => x.UseSqlServer(connectionString));
+        }
     }
 }

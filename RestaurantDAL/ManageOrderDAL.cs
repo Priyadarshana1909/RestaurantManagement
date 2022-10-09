@@ -1,8 +1,10 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using LinqKit;
+using Microsoft.Data.SqlClient;
 using RestaurantDAL.Interface;
 using RestaurantDTO.Request;
 using RestaurantDTO.Response;
 using System.Data;
+using System.Linq.Expressions;
 
 namespace RestaurantDAL
 {
@@ -13,6 +15,15 @@ namespace RestaurantDAL
     {
         private static string ConnectionString = Common.GetConnectionString();
 
+
+        private readonly IUnitOfWork<EntityFrameworkUtility.Order> _orderRepository;
+
+        public ManageOrderDAL(IUnitOfWork<EntityFrameworkUtility.Order> orderRepository)
+        {
+            _orderRepository = orderRepository;
+        }
+
+
         /// <summary>
         /// Get order
         /// </summary>
@@ -21,21 +32,37 @@ namespace RestaurantDAL
         public OrderResponse GetOrder(int? OrderId)
         {
             var response = new OrderResponse { IsSuccessFull = false };
+
             try
             {
 
-                SqlParameter[] parameters2 = new SqlParameter[1];
+                Expression<Func<EntityFrameworkUtility.Order, bool>> OrderPredicate = PredicateBuilder.New<EntityFrameworkUtility.Order>(true);
 
-                parameters2[0] = new SqlParameter("@OrderID", OrderId);
+                if (OrderId != null)
+                    OrderPredicate = OrderPredicate.And(x => x.OrderID == OrderId.Value);
 
-                var ds2 = SqlHelper.ExecuteDataset(ConnectionString, "USP_GetOrder", parameters2);
+                var Orders = _orderRepository.DbRepository().GetQueryWithIncludes(OrderId == null ? null : OrderPredicate, null, new string[] { "Restaurant", "RestaurantMenuItem" }).ToList();
 
-                List<Order> Orders = new();
-                if (ds2 != null && ds2.Tables.Count > 0)
-                    Orders = DataAccessHelper.ConvertToList<Order>(ds2.Tables[0]);
-
+                if (Orders != null && Orders.Any())
+                {
+                    foreach (var orderItem in Orders)
+                    {
+                        response.Orders.Add(new Order()
+                        {
+                            OrderID = orderItem.OrderID,
+                            OrderDate = orderItem.OrderDate,
+                            RestaurantID = orderItem.Restaurant.RestaurantID,
+                            MenuItemID = orderItem.RestaurantMenuItem.MenuItemID,
+                            ItemQuantity = orderItem.ItemQuantity,
+                            ItemPrice = orderItem.RestaurantMenuItem.ItemPrice,
+                            OrderAmount = orderItem.OrderAmount,
+                            DiningTableID = orderItem.DiningTableID,
+                            RestaurantName = orderItem.Restaurant.RestaurantName,
+                            ItemName = orderItem.RestaurantMenuItem.ItemName
+                        });
+                    }
+                }
                 response.IsSuccessFull = true;
-                response.Orders = Orders;
             }
             catch (Exception ex)
             {

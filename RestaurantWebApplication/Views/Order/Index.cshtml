@@ -61,7 +61,7 @@ else @if (TempData["Message"] != null)
                     @Html.DisplayFor(modelItem => item.ItemPrice)
                 </td>
                    <td style="text-align:right;width:140px;">
-                    @Html.DisplayFor(modelItem => item.OrderAmount)
+                    @Html.DisplayFor(modelItem => item.FormattedOrderAmount)
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new {  id = item.OrderID  }) |

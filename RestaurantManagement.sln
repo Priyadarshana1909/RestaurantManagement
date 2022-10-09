@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DBScripts", "DBScripts", "{
 	ProjectSection(SolutionItems) = preProject
 		E:\RestaurantScripts\DataGeneration.sql = E:\RestaurantScripts\DataGeneration.sql
 		E:\RestaurantScripts\SchemaGeneration.sql = E:\RestaurantScripts\SchemaGeneration.sql
+		SPFunctionChanges.sql = SPFunctionChanges.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestCases", "TestCases", "{525F05CC-035C-47CA-8DCD-B95BA3C191B4}"

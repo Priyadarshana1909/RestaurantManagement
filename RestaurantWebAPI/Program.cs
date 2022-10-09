@@ -1,4 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using RestaurantDAL;
+using RestaurantDAL.EntityFrameworkUtility;
 using RestaurantWebAPI.Extensions;
 using System.Reflection;
 
@@ -27,6 +30,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddContext();
+
+builder.Services.AddDbContext<RestaurantManagementContext>(options => options.UseSqlServer(Common.GetConnectionString()));
 
 //Project Dependancy resolver
 builder.Services.AddDAL();

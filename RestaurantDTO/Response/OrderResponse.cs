@@ -27,6 +27,22 @@ namespace RestaurantDTO.Response
         [Display(Name = "Order Amount")]
         public double? OrderAmount { get; set; }
 
+        [Display(Name = "Order Amount")]
+        public string FormattedOrderAmount
+        {
+            get
+            {
+                if (OrderAmount != null)
+                {
+                    return OrderAmount.Value.ToString("F");
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+        }
+
         public int DiningTableID { get; set; }
 
         [Display(Name = "Restaurant Name")]

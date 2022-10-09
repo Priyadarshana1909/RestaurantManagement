@@ -14,10 +14,11 @@ namespace RestaurantDTO.Request
         public List<Restaurant> Restaurants { get; set; } = new();
 
         [Required(AllowEmptyStrings = false)]
-        [MaxLength(50, ErrorMessage = "Customer name min length 50")]
+        [MaxLength(100, ErrorMessage = "Customer name min length 50")]
         [MinLength(10, ErrorMessage = "Customer name min length 10")]
         [Display(Name = "Customer Name")]
-        public string CustomerName { get; set; }
+        [RegularExpression(@"^[a-zA-Z ]*$", ErrorMessage = "Invalid customer name")]
+        public string CustomerName { get; set; }    
 
         [Required(AllowEmptyStrings = false)]
         [MinLength(10, ErrorMessage = "Mobile no min length 10")]

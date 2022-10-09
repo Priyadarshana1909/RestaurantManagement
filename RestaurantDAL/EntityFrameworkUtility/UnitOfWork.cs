@@ -1,9 +1,4 @@
 ﻿using RestaurantDAL.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RestaurantDAL.EntityFrameworkUtility
 {
@@ -14,8 +9,6 @@ namespace RestaurantDAL.EntityFrameworkUtility
         private readonly IGenericRepository<TEntity> _repository;
         private bool _disposed;
 
-        public bool SkipPolicy { get; set; }
-
         public UnitOfWork(RestaurantManagementContext dbContext, IGenericRepository<TEntity> repository)
         {
             _dbContext = dbContext;
@@ -25,7 +18,6 @@ namespace RestaurantDAL.EntityFrameworkUtility
         public IGenericRepository<TEntity> DbRepository()
         {
             _repository.Context = _dbContext;
-            _repository.SkipPolicy = SkipPolicy;
             return _repository;
         }
 

@@ -73,9 +73,12 @@ namespace RestaurantDAL
                     Direction = ParameterDirection.Output
                  
                 };
-
+                
                 SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure, "USP_Customer", parameters2);
-                response.IsSuccessFull = true;
+
+                if (Convert.ToInt32(parameters2[5].Value) > 0)
+                    response.IsSuccessFull = true;
+               
             }
             catch (Exception ex)
             {

@@ -1,29 +1,32 @@
 ﻿@model IEnumerable<RestaurantDTO.Response.CustomerReport>
-<table class="table">
+<table class="table table-bordered table-condensed table-striped table-hover sortable">
     <thead>
-        <tr>
-            <th>
+        <tr class="danger">
+            <th sortcolumn="CustomerName" sortorder="DESC">
                 @Html.DisplayNameFor(model => model.CustomerName)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DiningTableID)
+
+            <th sortcolumn="RestaurantName" sortorder="DESC">
+                @Html.DisplayNameFor(model => model.RestaurantName)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Location)
-            </th>
-            <th>
+            <th sortcolumn="OrderID" sortorder="DESC">
                 @Html.DisplayNameFor(model => model.OrderID)
             </th>
-            <th>
+            <th  sortcolumn="Location" sortorder="DESC">
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
+
+            <th sortcolumn="ItemQuantity" sortorder="DESC">
                 @Html.DisplayNameFor(model => model.ItemQuantity)
             </th>
-            <th>
+
+            <th sortcolumn="OrderAmount" sortorder="DESC">
                 @Html.DisplayNameFor(model => model.OrderAmount)
             </th>
-            <th>
+            <th  sortcolumn="OrderDate" sortorder="DESC">
                 @Html.DisplayNameFor(model => model.OrderDate)
             </th>
-            <th></th>
+
         </tr>
     </thead>
     <tbody>
@@ -37,14 +40,16 @@
                     </td>
 
                     <td>
-                        @Html.DisplayFor(modelItem => item.DiningTableID)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Location)
+                        @Html.DisplayFor(modelItem => item.RestaurantName)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.OrderID)
                     </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Location)
+                    </td>
+
                     <td>
                         @Html.DisplayFor(modelItem => item.ItemQuantity)
                     </td>

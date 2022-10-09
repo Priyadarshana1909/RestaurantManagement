@@ -1,6 +1,7 @@
 ﻿using RestaurantBLL;
 using RestaurantBLL.Interface;
 using RestaurantDAL;
+using RestaurantDAL.EntityFrameworkUtility;
 using RestaurantDAL.Interface;
 
 namespace RestaurantWebAPI.Extensions
@@ -32,6 +33,9 @@ namespace RestaurantWebAPI.Extensions
         /// <returns></returns>
         public static IServiceCollection AddDAL(this IServiceCollection services)
         {
+            services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
             services.AddTransient<IManageReportDAL, ManageReportDAL>();
             services.AddTransient<IManageBillDAL, ManageBillDAL>();
             services.AddTransient<IManageDiningTableDAL, ManageDiningTableDAL>();

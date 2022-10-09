@@ -17,79 +17,53 @@ else @if (TempData["Message"] != null)
 <div class="container">
     <div class="row">
         <div class="col-sm">
-            <label for="txtCustomerId" class="form-label font-bold">Customer ID</label>
-            <input type="number" id="txtCustomerId" class="form-control" />
-        </div>
-        <div class="col-sm">
             <label for="txtCustomerName" class="form-label font-bold">Customer Name</label>
             <input type="text" id="txtCustomerName" class="form-control" />
         </div>
         <div class="col-sm">
-            <label for="txtRestaurantId" class="form-label font-bold">Restaurant ID</label>
-            <input type="number" id="txtRestaurantId" class="form-control" />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            <label for="txtDiningTableId" class="form-label font-bold">Dining Table ID</label>
-            <input type="number" id="txtDiningTableId" class="form-control" />
+            <label for="txtRestaurantId" class="form-label font-bold">Restaurant Name</label>
+            <input type="text" id="txtRestaurantName" class="form-control" />
         </div>
         <div class="col-sm">
             <label for="txtOrderId" class="form-label font-bold">Order ID</label>
             <input type="number" id="txtOrderId" class="form-control" />
         </div>
-        <div class="col-sm">
-            <label for="txtLocation" class="form-label font-bold">Location</label>
-            <input type="text" id="txtLocation" class="form-control" />
-        </div>
-        
     </div>
     <div class="row">
         <div class="col-sm">
-            <label for="txtQuantity1" class="form-label font-bold">Item Quantity1</label>
+            <label for="txtLocation" class="form-label font-bold">Dining Table Location</label>
+            <input type="text" id="txtLocation" class="form-control" />
+        </div>
+        <div class="col-sm">
+            <label for="txtQuantity1" class="form-label font-bold">Start Quantity</label>
             <input type="number" id="txtQuantity1" class="form-control" />
         </div>
         <div class="col-sm">
-            <label for="txtQuantity2" class="form-label font-bold">Item Quantity2</label>
+            <label for="txtQuantity2" class="form-label font-bold">End Quantity</label>
             <input type="number" id="txtQuantity2" class="form-control" />
-        </div>        
-        <div class="col-sm">
-            <label for="txtAmount1" class="form-label font-bold">Order Amount1</label>
-            <input type="number" min="0.00" max="10000.00" step="0.01" id="txtAmount1" class="form-control" />
         </div>
     </div>
     <div class="row">
         <div class="col-sm">
-            <label for="txtAmount2" class="form-label font-bold">Order Amount2</label>
-            <input type="number" min="0.00" max="10000.00" step="0.01" id="txtAmount2" class="form-control" />
+            <label for="txtAmount1" class="form-label font-bold">Start Order Amount</label>
+            <input type="number" min="0.00" max="10000.00" step="0.01" id="txtAmount1" class="form-control" />
         </div>
         <div class="col-sm">
-            <label for="txtOrderDate" class="form-label font-bold">Order Date</label>
-            <input type="date" name="begin" placeholder="dd-mm-yyyy" id ="txtOrderDate" class="form-control" value="" min="1997-01-01" max="2030-12-31">
-        </div>        
-       <div class="col-sm">
-            <label for="txtOrderDateFrom" class="form-label font-bold">Order Date From</label>
-            <input type="date" name="begin" placeholder="dd-mm-yyyy" id ="txtOrderDateFrom" class="form-control" value="" min="1997-01-01" max="2030-12-31">
-        </div> 
+            <label for="txtAmount2" class="form-label font-bold">End Order Amount</label>
+            <input type="number" min="0.00" max="10000.00" step="0.01" id="txtAmount2" class="form-control" />
+        </div>
     </div>
-    <div class="row">        
+    <div class="row">
+        <div class="col-sm">
+            <label for="txtOrderDateFrom" class="form-label font-bold">Order Date From</label>
+            <input type="date" name="begin" placeholder="dd-mm-yyyy" id="txtOrderDateFrom" class="form-control" value="" min="1997-01-01" max="2030-12-31">
+        </div>
         <div class="col-sm">
             <label for="txtOrderDateTo" class="form-label font-bold">Order Date To</label>
-            <input type="date" name="begin" placeholder="dd-mm-yyyy" id ="txtOrderDateTo" class="form-control" value="" min="1997-01-01" max="2030-12-31">
-        </div>  
-         <div class="col-sm">
-            <label for="txtSortBy" class="form-label font-bold">Sort By</label>
-            <select name="SortBy" id="txtSortBy" class="form-control">
-                <option value="">Select Sorting</option>    
-                <option value="CustomerName">Customer Name</option>                
-                <option value="DiningTableID">DiningTableID</option>
-                <option value="Location">Location</option>
-                <option value="OrderID">OrderID</option>
-                <option value="OrderAmount">Order Amount</option>
-                <option value="OrderDate">Order Date</option>
-            </select>
-        </div>  
-        
+            <input type="date" name="begin" placeholder="dd-mm-yyyy" id="txtOrderDateTo" class="form-control" value="" min="1997-01-01" max="2030-12-31">
+        </div>
+    </div>
+    <div class="row">
         <div class="col-sm" style="margin-top:30px;">
             <input type="button" value="Search" class="btn btn-primary" id="btnSearch" />
         </div>
@@ -98,35 +72,144 @@ else @if (TempData["Message"] != null)
 
 <br />
 <div id="divPartial">
-     @Html.Partial("_SearchCustomer",Model)
+    @Html.Partial("_SearchCustomer",Model)
 </div>
 @section Scripts
 {
 <script type="text/javascript">
-     $(document).ready(function() 
+
+    function Validate()
+    {
+        var isValid = true;
+        if($('#txtQuantity2').val() != '' && $('#txtQuantity1').val() == '')
+        {
+           alert('Invalid Quantity');
+           isValid = false;
+        }
+
+        if($('#txtQuantity1').val() != '' && $('#txtQuantity2').val() != '')
+        {
+            var quantity1 = parseInt($('#txtQuantity1').val());
+            var quantity2 = parseInt($('#txtQuantity2').val());
+
+            if(quantity1 > quantity2)
+            {
+                alert('Invalid Quantity');
+                isValid = false;
+            }
+        }
+
+        if($('#txtAmount2').val() != '' && $('#txtAmount1').val() == '')
+        {
+           alert('Invalid Quantity');
+           isValid = false;
+        }
+
+        if($('#txtAmount1').val() != '' && $('#txtAmount2').val() != '')
+        {
+            var orderamount1 = parseInt($('#txtAmount1').val());
+            var orderamount2 = parseInt($('#txtAmount2').val());
+
+            if(orderamount1 > orderamount2)
+            {
+                alert('Invalid Order Amount Range');
+                isValid = false;
+            }
+        }
+
+
+        if($('#txtOrderDateTo').val() != '' && $('#txtOrderDateFrom').val() == '')
+        {
+           alert('Invalid Order Date');
+           isValid = false;
+        }
+
+        if($('#txtOrderDateFrom').val() != '' && $('#txtOrderDateTo').val() != '')
+        {
+           if(Date.parse($('#txtOrderDateTo').val()) < Date.parse($('#txtOrderDateFrom').val()))
+            {
+                alert('Invalid Order Dates');
+                isValid = false;
+            }
+        }
+
+      return isValid;
+    }
+    function GetSearchObject()
+    {
+        return { CustomerName : $('#txtCustomerName').val(), RestaurantName:$('#txtRestaurantName').val(),
+              OrderID : $('#txtOrderId').val(),
+              Location : $('#txtLocation').val(),
+              ItemQuantity1 : $('#txtQuantity1').val(),
+              ItemQuantity2 : $('#txtQuantity2').val(),
+               OrderAmount1 : $('#txtAmount1').val(),
+               OrderAmount2 : $('#txtAmount2').val(),
+                  OrderDateFrom : $('#txtOrderDateFrom').val(),
+              OrderDateTo : $('#txtOrderDateTo').val(),
+                SortBy : 'CustomerName',
+                 SortDirection : 'ASC'
+          };
+    }
+     $(document).ready(function()
      {
-         $("#btnSearch").click(function() 
+         $("#btnSearch").click(function()
          {
-             var searchReport = { CustomerID : $('#txtCustomerId').val(), CustomerName:$('#txtCustomerName').val(), RestaurantID : $('#txtRestaurantId').val(), DiningTableID : $('#txtDiningTableId').val(), OrderID : $('#txtOrderId').val(), Location : $('#txtLocation').val(), ItemQuantity1 : $('#txtQuantity1').val(),  ItemQuantity2 : $('#txtQuantity2').val(), OrderAmount1 : $('#txtAmount1').val(), OrderAmount2 : $('#txtAmount2').val(), OrderDate : $('#txtOrderDate').val(), OrderDateFrom : $('#txtOrderDateFrom').val(), OrderDateTo : $('#txtOrderDateTo').val(), SortBy : $('#txtSortBy').val()};
-             $('#divPartial').html(''); 
+             if(Validate())
+             {
+                    var searchReport = GetSearchObject();
+
+                     $('#divPartial').html('');
+                     $.ajax({
+                         type: "POST",
+                         url: '/Report/SearchCustomer',     //your action
+                         data: searchReport,   //your form name.it takes all the values of model
+                         dataType: 'html',
+                         async: false,
+                         success: function (result) {
+
+                            $('#divPartial').html(result);
+                         }
+                     })
+              }
+          });
+
+    });
+
+    $(document).on('click','th' , function()
+    {
+
+         if(Validate())
+         {
+           var sortcolumn = $(this).attr('sortcolumn');
+           var sortorder = $(this).attr('sortorder');
+
+           var searchReport = GetSearchObject();
+           searchReport.SortBy = sortcolumn;
+           searchReport.SortDirection = sortorder;
+
+
+             $('#divPartial').html('');
              $.ajax({
                  type: "POST",
                  url: '/Report/SearchCustomer',     //your action
-                 data: searchReport,   //your form name.it takes all the values of model               
+                 data: searchReport,   //your form name.it takes all the values of model
                  dataType: 'html',
                  async: false,
                  success: function (result) {
-                   
+                      //alert('2');
                     $('#divPartial').html(result);
+                    var newsortorder = 'DESC';
+
+                    if(sortorder == 'DESC')
+                       newsortorder = 'ASC'
+                    else
+                        newsortorder = 'DESC'
+                    $('th[sortcolumn=' + sortcolumn + ']').attr('sortorder',newsortorder);
                  }
              })
-         });
+          }
     });
-    //$(function() {
-    //    var format1 = moment($("#txtOrderDate").val()).format('YYYY-MM-DD');
-  
-    //        $("#txtOrderDate").text(format1);
-    //});
+
 </script>
 }
 
