@@ -71,7 +71,7 @@ GO
 
 ------(7) This sp holds type the Insert, Update, Delete of table BILLS
 --SELECT * FROM Bills
---Exec [dbo].[USP_Billis] @IsDelete = 1,@RestaurantID = 0, @BillsID = 0, @OrderID = 0, @BillAmount = 0, @CustomerID =0, @OutputID = 0
+--Exec [dbo].[USP_Bills] @IsDelete = 1,@RestaurantID = 0, @BillsID = 0, @OrderID = 0, @BillAmount = 0, @CustomerID =0, @OutputID = 0
 CREATE OR ALTER  PROCEDURE [dbo].[USP_Bills] (
 								@BillsID INT,
                                 @OrderID INT,
@@ -606,23 +606,21 @@ GO
 --EXEC USP_GetCustomerDynamicallyNew @OrderDateFrom = '2021-08-11', @OrderDateTo = '2022-08-26',  @SortBy = 'OrderDate', @SortDirection = ' ASC'
 --EXEC USP_GetCustomerDynamicallyNew @CustomerName = 'R'
 
-CREATE OR ALTER  PROCEDURE [dbo].[USP_GetCustomerDynamically] ( 
+CREATE OR ALTER PROCEDURE [dbo].[USP_GetCustomerDynamically] (
 
-    	@CustomerID		INT = NULL,
-		@CustomerName	NVARCHAR(100) = NULL,
-		@RestaurantID	INT = NULL,
-		@DiningTableID	INT = NULL,
-		@OrderID		INT = NULL,
-		@Location		NVARCHAR(100) = NULL,
-		@ItemQuantity1	INT = NULL,
-		@ItemQuantity2	INT = NULL,
-		@OrderAmount1	FLOAT = NULL,
-		@OrderAmount2	FLOAT = NULL,
-		@OrderDateFrom	DATE = NULL,
-		@OrderDateTo	DATE = NULL,
-		@SortBy NVARCHAR(50) = NULL,
-		@SortDirection NVARCHAR(10) = ' ASC'
-		)
+        @CustomerName NVARCHAR(100) = NULL,
+@OrderID INT = NULL,
+@RestaurantName NVARCHAR(100) = NULL,
+@Location NVARCHAR(100) = NULL,
+@ItemQuantity1 INT = NULL,
+@ItemQuantity2 INT = NULL,
+@OrderAmount1 FLOAT = NULL,
+@OrderAmount2 FLOAT = NULL,
+@OrderDateFrom DATE = NULL,
+@OrderDateTo DATE = NULL,
+@SortBy NVARCHAR(50) = 'CustomerName',
+@SortDirection NVARCHAR(10) = ' ASC'
+)
 AS
 BEGIN
 
@@ -631,98 +629,90 @@ SET @Location = LTRIM(RTRIM(@Location))
 
 IF(@ItemQuantity1 IS NOT NULL AND @ItemQuantity2 IS NULL)
 BEGIN
-	SET @ItemQuantity2 = @ItemQuantity1
+SET @ItemQuantity2 = @ItemQuantity1
 END
 
 
 IF(@OrderAmount1 IS NOT NULL AND @OrderAmount2 IS NULL)
 BEGIN
-	SET @OrderAmount2 = @OrderAmount1
+SET @OrderAmount2 = @OrderAmount1
 END
 
 IF(@OrderDateFrom IS NOT NULL AND @OrderDateTo IS NULL)
 BEGIN
-	SET @OrderDateTo = @OrderDateFrom
+SET @OrderDateTo = @OrderDateFrom
 END
 
-SELECT		C.CustomerID,C.CustomerName,D.RestaurantID,D.DiningTableID,D.[Location], 
-								O.OrderID,O.ItemQuantity,O.OrderAmount,O.OrderDate  from Bills B 
-					INNER JOIN	Customer C
-					ON			B.CustomerID =  C.CustomerID
-					INNER JOIN	[Order] O
-					ON			O.OrderID = B.OrderID
-					INNER JOIN	DiningTable D
-					ON			O.DiningTableID = D.DiningTableID
-WHERE 	(@CustomerID IS NULL OR C.CustomerID = 	@CustomerID)
-AND (@CustomerName IS NULL OR C.CustomerName LIKE + '%' + @CustomerName  + '%')
-AND (@RestaurantID IS NULL OR D.RestaurantID = @RestaurantID)
-AND (@DiningTableID IS NULL OR D.DiningTableID = @DiningTableID)
+SELECT C.CustomerID,C.CustomerName, R.RestaurantName,  D.RestaurantID,D.DiningTableID,D.[Location],
+O.OrderID,O.ItemQuantity,O.OrderAmount,O.OrderDate  from Bills B
+INNER JOIN Customer C
+ON B.CustomerID =  C.CustomerID
+INNER JOIN [Order] O
+ON O.OrderID = B.OrderID
+INNER JOIN DiningTable D
+ON O.DiningTableID = D.DiningTableID
+INNER JOIN Restaurant R
+ON O.RestaurantID = D.RestaurantID
+WHERE (@CustomerName IS NULL OR C.CustomerName LIKE + '%' + @CustomerName  + '%')
 AND (@OrderID IS NULL OR O.OrderID = @OrderID)
+AND (@RestaurantName IS NULL OR R.RestaurantName LIKE + '%' + @RestaurantName  + '%')
+
 AND (@Location IS NULL OR D.[Location] LIKE + '%' + @Location  + '%')
 AND (@ItemQuantity1 IS NULL OR @ItemQuantity2 IS NULL OR O.ItemQuantity BETWEEN @ItemQuantity1 AND @ItemQuantity2)
 AND (@OrderAmount1 IS NULL OR @OrderAmount2 IS NULL OR O.OrderAmount BETWEEN @OrderAmount1 AND @OrderAmount2)
 AND (@OrderDateFrom IS NULL OR @OrderDateTo IS NULL OR CAST(O.OrderDate as date)  BETWEEN @OrderDateFrom AND @OrderDateTo)
 
 ORDER BY  
-			CASE WHEN (@SortBy = 'CustomerID' AND @SortDirection='ASC')  
-                        THEN C.CustomerID  
-            END ASC,  
-            CASE WHEN (@SortBy = 'CustomerID' AND @SortDirection='DESC')  
-                        THEN C.CustomerID 
-            END DESC,
+
             CASE WHEN (@SortBy = 'CustomerName' AND @SortDirection='ASC')  
                         THEN C.CustomerName  
             END ASC,  
             CASE WHEN (@SortBy = 'CustomerName' AND @SortDirection='DESC')  
                         THEN C.CustomerName  
             END DESC,
-			CASE WHEN (@SortBy = 'RestaurantID' AND @SortDirection='ASC')  
-                        THEN D.RestaurantID 
+CASE WHEN (@SortBy = 'RestaurantName' AND @SortDirection='ASC')  
+                        THEN R.RestaurantName
             END ASC,  
-            CASE WHEN (@SortBy = 'RestaurantID' AND @SortDirection='DESC')  
-                        THEN D.RestaurantID
+            CASE WHEN (@SortBy = 'RestaurantName' AND @SortDirection='DESC')  
+                          THEN R.RestaurantName
             END DESC,
-			CASE WHEN (@SortBy = 'DiningTableID' AND @SortDirection='ASC')  
-                        THEN D.DiningTableID 
-            END ASC,  
-            CASE WHEN (@SortBy = 'DiningTableID' AND @SortDirection='DESC')  
-                        THEN D.DiningTableID
-            END DESC,
-			CASE WHEN (@SortBy = 'OrderID' AND @SortDirection='ASC')  
+
+CASE WHEN (@SortBy = 'OrderID' AND @SortDirection='ASC')  
                         THEN O.OrderID
             END ASC,  
             CASE WHEN (@SortBy = 'OrderID' AND @SortDirection='DESC')  
-                        THEN O.OrderID
+                          THEN O.OrderID
             END DESC,
-			CASE WHEN (@SortBy = 'Location' AND @SortDirection='ASC')  
-                        THEN D.[Location] 
+
+
+CASE WHEN (@SortBy = 'Location' AND @SortDirection='ASC')  
+                        THEN D.[Location]
             END ASC,  
             CASE WHEN (@SortBy = 'Location' AND @SortDirection='DESC')  
                         THEN D.[Location]
             END DESC,
-			CASE WHEN (@SortBy = 'ItemQuantity' AND @SortDirection='ASC')  
-                        THEN O.ItemQuantity 
+CASE WHEN (@SortBy = 'ItemQuantity' AND @SortDirection='ASC')  
+                        THEN O.ItemQuantity
             END ASC,  
             CASE WHEN (@SortBy = 'ItemQuantity' AND @SortDirection='DESC')  
                         THEN O.ItemQuantity
             END DESC,
-			CASE WHEN (@SortBy = 'OrderAmount' AND @SortDirection='ASC')  
-                        THEN O.OrderAmount 
+CASE WHEN (@SortBy = 'OrderAmount' AND @SortDirection='ASC')  
+                        THEN O.OrderAmount
             END ASC,  
             CASE WHEN (@SortBy = 'OrderAmount' AND @SortDirection='DESC')  
                         THEN O.OrderAmount
             END DESC,
-			CASE WHEN (@SortBy = 'OrderDate' AND @SortDirection='ASC')  
-                        THEN O.OrderDate 
+CASE WHEN (@SortBy = 'OrderDate' AND @SortDirection='ASC')  
+                        THEN O.OrderDate
             END ASC,
-			CASE WHEN (@SortBy = 'OrderDate' AND @SortDirection='DESC')  
-                        THEN O.OrderDate 
+CASE WHEN (@SortBy = 'OrderDate' AND @SortDirection='DESC')  
+                        THEN O.OrderDate
             END DESC
-			
+
 
 
 END
-				
 GO
 /****** Object:  StoredProcedure [dbo].[USP_GetDiningTableFromRestaurantId]    Script Date: 08/10/2022 23:16:33 ******/
 SET ANSI_NULLS ON
