@@ -71,7 +71,8 @@ GO
 
 ------(7) This sp holds type the Insert, Update, Delete of table BILLS
 --SELECT * FROM Bills
---Exec [dbo].[USP_Bills] @IsDelete = 1,@RestaurantID = 0, @BillsID = 0, @OrderID = 0, @BillAmount = 0, @CustomerID =0, @OutputID = 0
+--Select * from [Order]
+--Exec [dbo].[USP_Bills]  @BillsID = 0,@RestaurantID = 4, @OrderID = 43, @BillAmount = 10, @CustomerID =14,@IsDelete = 0, @OutputID = 0
 CREATE OR ALTER  PROCEDURE [dbo].[USP_Bills] (
 								@BillsID INT,
                                 @OrderID INT,
@@ -176,7 +177,14 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
---Exec [USP_Cuisine]  @CuisineID = 0, @RestaurantID = 0, @CuisineName = '', @IsDelete = 0, @OutputCuisineId = 0
+--Select * from Cuisine
+--Insert Cuisine
+--Exec [USP_Cuisine]  @CuisineID = 0, @RestaurantID = 4, @CuisineName = 'East Mahi', @IsDelete = 0, @OutputCuisineId = 0
+--Update Cuisine
+--Exec [USP_Cuisine]  @CuisineID = 21, @RestaurantID = 4, @CuisineName = 'West Mahi', @IsDelete = 0, @OutputCuisineId = 0
+--Delete Cuisine Transaction which is used in RestaurantMenuItem will Rollback
+--Exec [USP_Cuisine]  @CuisineID = 18, @RestaurantID = 4, @CuisineName = 'North Mahi', @IsDelete = 1, @OutputCuisineId = 0
+
 CREATE OR ALTER PROCEDURE [dbo].[USP_Cuisine] (
 								@CuisineID INT,
                                 @RestaurantID INT,
@@ -265,19 +273,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 ------(6) This sp holds type the Insert, Update, Delete of table Customer 
 
---Declare @ID INT
---EXEC USP_Customer @CustomerID = 0, @RestaurantID ='3', @CustomerName = 'Priyanka Parmer ',@MobileNo = '8538978242',
---@IsDelete = 0
---SELECT @ID AS 'number of records affected'
---GO
-
---select * from RestaurantMenuItem
---update Cuisine set RestaurantID= 7 where CuisineID=12
-
 --Select * from Customer
-
-
---Exec [dbo].[USP_Customer] @CustomerID = 1,@RestaurantID = 0, @CustomerName = '', @MobileNo = '', @IsDelete = 0, @OutputID = 0
+--Insert 
+--Exec [dbo].[USP_Customer] @CustomerID = 0,@RestaurantID = 6, @CustomerName = 'Saurav Solanki', @MobileNo = '7865665878', @IsDelete = 0, @OutputID = 0
+--Update
+--Exec [dbo].[USP_Customer] @CustomerID = 14,@RestaurantID = 4, @CustomerName = 'Saurav Solanki', @MobileNo = '7865665800', @IsDelete = 0, @OutputID = 0
+--Delete
+--Exec [dbo].[USP_Customer] @CustomerID = 15,@RestaurantID = 4, @CustomerName = 'Nehal Solanki', @MobileNo = '7865665889', @IsDelete = 1, @OutputID = 0
 
 CREATE OR ALTER  PROCEDURE [dbo].[USP_Customer] (
 								@CustomerID INT,
@@ -391,21 +393,20 @@ GO
 
 ------(4) This sp holds type the Insert, Update, Delete of table DiningTable 
 
---Declare @ID INT
---EXEC USP_DiningTable @DiningTableID = 4, @RestaurantID = 3,@Location = 'MG Palace',
---@IsDelete = 0, @OutputDiningTableID  = @ID OUTPUT
---SELECT @ID AS 'Record Number affected'
---GO
 
 --select * from DiningTable
+--Select * from DiningTableTrack
+--Select * from Restaurant
 --update DiningTable set DiningTableID= 3 where CuisineID=12
-
 --Insert into DiningTable Values (2,'Kadi')
 
-
+--Insert Transaction
 --Exec [dbo].[USP_DiningTable] @DiningTableID = 1,@RestaurantID = 0, @Location = '',  @IsDelete = 0, @OutputDiningTableID = 0
+--Exec [dbo].[USP_DiningTable] @DiningTableID = 0,@RestaurantID = 4, @Location = 'Shahibaug',  @IsDelete = 0, @OutputDiningTableID = 0
+--Delete Transaction
+--Exec [dbo].[USP_DiningTable] @DiningTableID = 13,@RestaurantID = 4, @Location = 'Shahibaug',  @IsDelete = 1, @OutputDiningTableID = 0
 
-CREATE OR ALTER PROCEDURE [dbo].[USP_DiningTable] (
+ALTER   PROCEDURE [dbo].[USP_DiningTable] (
 								@DiningTableID INT,
                                 @RestaurantID INT,
                                 @Location NVARCHAR(100),									
@@ -433,9 +434,9 @@ BEGIN TRY
 									[Location])
 					VALUES     ( @RestaurantID,
 									@Location);
-				
+				Declare @NewDiningTableID INT= @@Identity
 				INSERT INTO DiningTableTrack (DiningTableID, TableStatus)
-				VALUES (@OutputDiningTableID, 'Vacant');
+				VALUES (@NewDiningTableID, 'Vacant');
 
 				SELECT @OutputDiningTableID =  @@ROWCOUNT
 
@@ -452,7 +453,9 @@ BEGIN TRY
 			END
 			ELSE IF (@IsDelete = 1)
 			BEGIN
+				DELETE FROM DiningTableTrack WHERE DiningTableID = @DiningTableID;
 				DELETE FROM DiningTable WHERE DiningTableID  = @DiningTableID;
+				
 				SELECT @OutputDiningTableID =  @@ROWCOUNT
 			END
 	
@@ -486,7 +489,6 @@ BEGIN CATCH
 END CATCH;
 
 END
-GO
 /****** Object:  StoredProcedure [dbo].[USP_GetAmountByDayAndTable]    Script Date: 08/10/2022 23:16:33 ******/
 SET ANSI_NULLS ON
 GO
@@ -589,131 +591,136 @@ END
 GO
 
 /****** Object:  StoredProcedure [dbo].[USP_GetCustomerDynamicallyNew]    Script Date: 08/10/2022 23:16:33 ******/
+USE [DBRestaurant]
+GO
+/****** Object:  StoredProcedure [dbo].[USP_GetCustomerDynamically]    Script Date: 12/10/2022 13:15:39 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
---EXEC USP_GetCustomerDynamicallyNew  @SortBy = 'Location', @SortDirection = 'DESC'
---EXEC USP_GetCustomerDynamicallyNew @OrderAmount1 = 234, @OrderAmount2 = 700, @SortBy = 'OrderDate', @SortDirection = ' DESC'
---EXEC USP_GetCustomerDynamicallyNew @OrderAmount1 = 0, @OrderAmount2 = 700, @SortBy = 'OrderDate', @SortDirection = ' ASC'
---EXEC USP_GetCustomerDynamicallyNew @ItemQuantity1 = 5, @SortBy = 'OrderDate', @SortDirection = ' ASC'
---EXEC USP_GetCustomerDynamicallyNew @ItemQuantity1 = 5,  @ItemQuantity2 = 10, @DiningTableID = 2, @SortBy = 'OrderDate', @SortDirection = ' ASC'
---EXEC USP_GetCustomerDynamicallyNew @ItemQuantity1 = 5,  @ItemQuantity2 = 10, @DiningTableID = 7, @SortBy = 'OrderDate', @SortDirection = ' ASC'
---EXEC USP_GetCustomerDynamicallyNew @ItemQuantity1 = 5, @Location = 'SURAT' , @SortBy = 'OrderDate', @SortDirection = ' ASC'
---EXEC USP_GetCustomerDynamicallyNew @ItemQuantity1 = 5, @Location = 'Baroda' , @SortBy = 'OrderDate', @SortDirection = ' ASC'
---EXEC USP_GetCustomerDynamicallyNew @ItemQuantity1 = 5, @RestaurantID = 1,  @Location = 'Surat' , @SortBy = 'OrderDate', @SortDirection = ' ASC'
---EXEC USP_GetCustomerDynamicallyNew @OrderDateFrom = '2022-08-26',  @SortBy = 'OrderDate', @SortDirection = ' ASC'
---EXEC USP_GetCustomerDynamicallyNew @OrderDateFrom = '2021-08-11', @OrderDateTo = '2022-08-26',  @SortBy = 'OrderDate', @SortDirection = ' ASC'
---EXEC USP_GetCustomerDynamicallyNew @CustomerName = 'R'
+--Select * from Customer
+--Select * from [Order]
+--Select * from Bills
+--EXEC USP_GetCustomerDynamically  @SortBy = 'Location', @SortDirection = 'DESC'
+--EXEC USP_GetCustomerDynamically @OrderAmount1 = 234, @OrderAmount2 = 700, @SortBy = 'OrderDate', @SortDirection = 'DESC'
+--EXEC USP_GetCustomerDynamically @OrderAmount1 = 0, @OrderAmount2 = 700, @SortBy = 'OrderDate', @SortDirection = 'ASC'
+--EXEC USP_GetCustomerDynamically @ItemQuantity1 = 5, @SortBy = 'OrderDate', @SortDirection = ' ASC'
+--EXEC USP_GetCustomerDynamically @ItemQuantity2 = 8, @SortBy = 'OrderDate', @SortDirection = 'ASC'
+--EXEC USP_GetCustomerDynamically @ItemQuantity1 = 5,  @ItemQuantity2 = 10,  @SortBy = 'OrderDate', @SortDirection = 'ASC'
+--EXEC USP_GetCustomerDynamically @ItemQuantity1 = 5, @Location = 'SURAT' , @SortBy = 'OrderDate', @SortDirection = 'ASC'
+--EXEC USP_GetCustomerDynamically @ItemQuantity1 = 5, @Location = 'Baroda' , @SortBy = 'OrderDate', @SortDirection = 'ASC'
+--EXEC USP_GetCustomerDynamically @ItemQuantity1 = 5, @RestaurantID = 1,  @Location = 'Surat' , @SortBy = 'OrderDate', @SortDirection = 'ASC'
+--EXEC USP_GetCustomerDynamically @OrderDateTo = '2022-08-21',  @SortBy = 'OrderDate', @SortDirection = ' ASC'
+--EXEC USP_GetCustomerDynamically @OrderDateFrom = '2021-08-11', @OrderDateTo = '2022-08-26',  @SortBy = 'OrderDate', @SortDirection = 'ASC'
+--EXEC USP_GetCustomerDynamically @CustomerName = 'R'
 
-CREATE OR ALTER PROCEDURE [dbo].[USP_GetCustomerDynamically] (
+ALTER   PROCEDURE [dbo].[USP_GetCustomerDynamically] (
 
         @CustomerName NVARCHAR(100) = NULL,
-@OrderID INT = NULL,
-@RestaurantName NVARCHAR(100) = NULL,
-@Location NVARCHAR(100) = NULL,
-@ItemQuantity1 INT = NULL,
-@ItemQuantity2 INT = NULL,
-@OrderAmount1 FLOAT = NULL,
-@OrderAmount2 FLOAT = NULL,
-@OrderDateFrom DATE = NULL,
-@OrderDateTo DATE = NULL,
-@SortBy NVARCHAR(50) = 'CustomerName',
-@SortDirection NVARCHAR(10) = ' ASC'
+		@OrderID INT = NULL,
+		@RestaurantName NVARCHAR(100) = NULL,
+		@Location NVARCHAR(100) = NULL,
+		@ItemQuantity1 INT = NULL,
+		@ItemQuantity2 INT = NULL,
+		@OrderAmount1 FLOAT = NULL,
+		@OrderAmount2 FLOAT = NULL,
+		@OrderDateFrom DATE = NULL,
+		@OrderDateTo DATE = NULL,
+		@SortBy NVARCHAR(50) = 'CustomerName',
+		@SortDirection NVARCHAR(10) = ' ASC'
 )
 AS
 BEGIN
+	
+	SET @CustomerName = LTRIM(RTRIM(@CustomerName))  
+	SET @Location = LTRIM(RTRIM(@Location))  
 
-SET @CustomerName = LTRIM(RTRIM(@CustomerName))  
-SET @Location = LTRIM(RTRIM(@Location))  
+	IF(@ItemQuantity1 IS NOT NULL AND @ItemQuantity2 IS NULL)
+	BEGIN
+	SET @ItemQuantity2 = @ItemQuantity1
+	END
 
-IF(@ItemQuantity1 IS NOT NULL AND @ItemQuantity2 IS NULL)
-BEGIN
-SET @ItemQuantity2 = @ItemQuantity1
+
+	IF(@OrderAmount1 IS NOT NULL AND @OrderAmount2 IS NULL)
+	BEGIN
+	SET @OrderAmount2 = @OrderAmount1
+	END
+
+	IF(@OrderDateFrom IS NOT NULL AND @OrderDateTo IS NULL)
+	BEGIN
+	SET @OrderDateTo = @OrderDateFrom
+	END
+	ELSE IF(@OrderDateTo IS NOT NULL AND @OrderDateFrom IS NULL)
+	BEGIN
+	SET @OrderDateFrom = @OrderDateTo
+	END
+
+	
+	SELECT C.CustomerID,C.CustomerName, R.RestaurantName,  D.RestaurantID,D.DiningTableID,D.[Location],
+	O.OrderID,O.ItemQuantity,O.OrderAmount,O.OrderDate FROM Bills B
+	INNER JOIN Customer C
+		ON B.CustomerID =  C.CustomerID
+	INNER JOIN [Order] O
+		ON O.OrderID = B.OrderID
+	INNER JOIN DiningTable D
+		ON O.DiningTableID = D.DiningTableID
+	INNER JOIN Restaurant R
+		ON O.RestaurantID = R.RestaurantID
+	WHERE (@CustomerName IS NULL OR C.CustomerName LIKE + '%' + @CustomerName  + '%')
+		AND (@OrderID IS NULL OR O.OrderID = @OrderID)
+		AND (@RestaurantName IS NULL OR R.RestaurantName LIKE + '%' + @RestaurantName  + '%')
+
+		AND (@Location IS NULL OR D.[Location] LIKE + '%' + @Location  + '%')
+		AND (@ItemQuantity1 IS NULL OR @ItemQuantity2 IS NULL OR O.ItemQuantity BETWEEN @ItemQuantity1 AND @ItemQuantity2)
+		AND (@OrderAmount1 IS NULL OR @OrderAmount2 IS NULL OR O.OrderAmount BETWEEN @OrderAmount1 AND @OrderAmount2)
+		AND (@OrderDateFrom IS NULL OR @OrderDateTo IS NULL OR CAST(O.OrderDate as date)  BETWEEN @OrderDateFrom AND @OrderDateTo)
+
+	ORDER BY  
+
+		CASE WHEN (@SortBy = 'CustomerName' AND @SortDirection='ASC')  
+							THEN C.CustomerName  
+				END ASC,  
+				CASE WHEN (@SortBy = 'CustomerName' AND @SortDirection='DESC')  
+							THEN C.CustomerName  
+				END DESC,
+		CASE WHEN (@SortBy = 'RestaurantName' AND @SortDirection='ASC')  
+							THEN R.RestaurantName
+				END ASC,  
+				CASE WHEN (@SortBy = 'RestaurantName' AND @SortDirection='DESC')  
+							  THEN R.RestaurantName
+				END DESC,
+		CASE WHEN (@SortBy = 'OrderID' AND @SortDirection='ASC')  
+							THEN O.OrderID
+				END ASC,  
+				CASE WHEN (@SortBy = 'OrderID' AND @SortDirection='DESC')  
+							  THEN O.OrderID
+				END DESC,
+		CASE WHEN (@SortBy = 'Location' AND @SortDirection='ASC')  
+							THEN D.[Location]
+				END ASC,  
+				CASE WHEN (@SortBy = 'Location' AND @SortDirection='DESC')  
+							THEN D.[Location]
+				END DESC,
+		CASE WHEN (@SortBy = 'ItemQuantity' AND @SortDirection='ASC')  
+							THEN O.ItemQuantity
+				END ASC,  
+				CASE WHEN (@SortBy = 'ItemQuantity' AND @SortDirection='DESC')  
+							THEN O.ItemQuantity
+				END DESC,
+		CASE WHEN (@SortBy = 'OrderAmount' AND @SortDirection='ASC')  
+							THEN O.OrderAmount
+				END ASC,  
+				CASE WHEN (@SortBy = 'OrderAmount' AND @SortDirection='DESC')  
+							THEN O.OrderAmount
+				END DESC,
+		CASE WHEN (@SortBy = 'OrderDate' AND @SortDirection='ASC')  
+							THEN O.OrderDate
+				END ASC,
+		CASE WHEN (@SortBy = 'OrderDate' AND @SortDirection='DESC')  
+							THEN O.OrderDate
+				END DESC
 END
 
-
-IF(@OrderAmount1 IS NOT NULL AND @OrderAmount2 IS NULL)
-BEGIN
-SET @OrderAmount2 = @OrderAmount1
-END
-
-IF(@OrderDateFrom IS NOT NULL AND @OrderDateTo IS NULL)
-BEGIN
-SET @OrderDateTo = @OrderDateFrom
-END
-
-SELECT C.CustomerID,C.CustomerName, R.RestaurantName,  D.RestaurantID,D.DiningTableID,D.[Location],
-O.OrderID,O.ItemQuantity,O.OrderAmount,O.OrderDate  from Bills B
-INNER JOIN Customer C
-ON B.CustomerID =  C.CustomerID
-INNER JOIN [Order] O
-ON O.OrderID = B.OrderID
-INNER JOIN DiningTable D
-ON O.DiningTableID = D.DiningTableID
-INNER JOIN Restaurant R
-ON O.RestaurantID = D.RestaurantID
-WHERE (@CustomerName IS NULL OR C.CustomerName LIKE + '%' + @CustomerName  + '%')
-AND (@OrderID IS NULL OR O.OrderID = @OrderID)
-AND (@RestaurantName IS NULL OR R.RestaurantName LIKE + '%' + @RestaurantName  + '%')
-
-AND (@Location IS NULL OR D.[Location] LIKE + '%' + @Location  + '%')
-AND (@ItemQuantity1 IS NULL OR @ItemQuantity2 IS NULL OR O.ItemQuantity BETWEEN @ItemQuantity1 AND @ItemQuantity2)
-AND (@OrderAmount1 IS NULL OR @OrderAmount2 IS NULL OR O.OrderAmount BETWEEN @OrderAmount1 AND @OrderAmount2)
-AND (@OrderDateFrom IS NULL OR @OrderDateTo IS NULL OR CAST(O.OrderDate as date)  BETWEEN @OrderDateFrom AND @OrderDateTo)
-
-ORDER BY  
-
-            CASE WHEN (@SortBy = 'CustomerName' AND @SortDirection='ASC')  
-                        THEN C.CustomerName  
-            END ASC,  
-            CASE WHEN (@SortBy = 'CustomerName' AND @SortDirection='DESC')  
-                        THEN C.CustomerName  
-            END DESC,
-CASE WHEN (@SortBy = 'RestaurantName' AND @SortDirection='ASC')  
-                        THEN R.RestaurantName
-            END ASC,  
-            CASE WHEN (@SortBy = 'RestaurantName' AND @SortDirection='DESC')  
-                          THEN R.RestaurantName
-            END DESC,
-
-CASE WHEN (@SortBy = 'OrderID' AND @SortDirection='ASC')  
-                        THEN O.OrderID
-            END ASC,  
-            CASE WHEN (@SortBy = 'OrderID' AND @SortDirection='DESC')  
-                          THEN O.OrderID
-            END DESC,
-
-
-CASE WHEN (@SortBy = 'Location' AND @SortDirection='ASC')  
-                        THEN D.[Location]
-            END ASC,  
-            CASE WHEN (@SortBy = 'Location' AND @SortDirection='DESC')  
-                        THEN D.[Location]
-            END DESC,
-CASE WHEN (@SortBy = 'ItemQuantity' AND @SortDirection='ASC')  
-                        THEN O.ItemQuantity
-            END ASC,  
-            CASE WHEN (@SortBy = 'ItemQuantity' AND @SortDirection='DESC')  
-                        THEN O.ItemQuantity
-            END DESC,
-CASE WHEN (@SortBy = 'OrderAmount' AND @SortDirection='ASC')  
-                        THEN O.OrderAmount
-            END ASC,  
-            CASE WHEN (@SortBy = 'OrderAmount' AND @SortDirection='DESC')  
-                        THEN O.OrderAmount
-            END DESC,
-CASE WHEN (@SortBy = 'OrderDate' AND @SortDirection='ASC')  
-                        THEN O.OrderDate
-            END ASC,
-CASE WHEN (@SortBy = 'OrderDate' AND @SortDirection='DESC')  
-                        THEN O.OrderDate
-            END DESC
-
-
-
-END
-GO
 /****** Object:  StoredProcedure [dbo].[USP_GetDiningTableFromRestaurantId]    Script Date: 08/10/2022 23:16:33 ******/
 SET ANSI_NULLS ON
 GO
@@ -839,6 +846,13 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+--Insert
+--Exec USP_Order @OrderID = 0,@RestaurantID = 4, @MenuItemID = 10,@ItemQuantity = 4,@DiningTableID = 12,@IsDelete = 0,@OutputId =0
+--Update
+--Exec USP_Order @OrderID = 43,@RestaurantID = 4, @MenuItemID = 11,@ItemQuantity = 5,@DiningTableID = 12,@IsDelete = 0,@OutputId =0
+--Delete
+--Exec USP_Order @OrderID = 44,@RestaurantID = 4, @MenuItemID = 10,@ItemQuantity = 4,@DiningTableID = 12,@IsDelete = 1,@OutputId =0
+
 CREATE OR ALTER  PROCEDURE [dbo].[USP_Order] (
                                 @OrderID INT,                                
 								@RestaurantID INT,
@@ -967,21 +981,15 @@ GO
 ------(1) This sp holds type the Insert, Update, Delete of table Restaurant
 
 
---Declare @ID INT
---EXEC USP_Restaurant @RestaurantID = 3, @RestaurantName = 'Chocalate House', @Address = '2 Maninagar Ahmedabad', @MobileNo = '5134567890', 
---@IsDelete = 0, @OutpurRestaurantId  = @ID OUTPUT
---SELECT @ID AS 'Record Number Affected'
---GO
-
 --Select * from Restaurant
+--Insert the Restaurant
+--Exec USP_Restaurant @RestaurantID = 0 , @RestaurantName = 'Mahi', @Address = '45-New Vadilal Cross Road', @MobileNo=7865445344, @IsDelete = 0,@OutpurRestaurantId=0
 
---EXEC sys.sp_cdc_enable_table  
---@source_schema = N'dbo',  
---@source_name   = N'Employee_Main',  
---@role_name     = NULL,  
---@filegroup_name = NULL,  
---@supports_net_changes = 0 
---GO
+--Update the Restaurant
+--Exec USP_Restaurant @RestaurantID = 6 , @RestaurantName = 'Rahi', @Address = '45-New Swiss Road', @MobileNo=7865555344, @IsDelete = 0,@OutpurRestaurantId=0
+
+--Delete Transaction made on the Used Restaurant Id in Cuisine which will rollback the transaction
+--Exec USP_Restaurant @RestaurantID = 4 , @RestaurantName = 'Mahi', @Address = '45-New Vadilal Cross Road', @MobileNo=7865445344, @IsDelete = 1,@OutpurRestaurantId=0
 
 --Select * From Restaurant
 --sp_helptext USP_Restaurant
@@ -1105,15 +1113,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 ------(3) This sp holds type the Insert, Update, Delete of table RestaurantMenuItem
 
---Declare @ID INT
---EXEC USP_RestaurantMenuItem @MenuItemID = 0, @CuisineID = 4,@ItemName = 'Dessert',@ItemPrice = 117.9,
---@IsDelete = 0, @OutputMenuItemID  = @ID OUTPUT
---SELECT @ID AS 'Record Number affected'
---GO
-
+--Insert
+--EXEC USP_RestaurantMenuItem @MenuItemID = 0, @CuisineID = 21,@ItemName = 'Pizza Triplet',@ItemPrice = 155,@IsDelete = 0, @OutputMenuItemID  = 0
+--Update
+--EXEC USP_RestaurantMenuItem @MenuItemID = 11, @CuisineID = 21,@ItemName = 'Pizza Sandwich',@ItemPrice = 155,@IsDelete = 0, @OutputMenuItemID  = 0
+--Delete 
+--EXEC USP_RestaurantMenuItem @MenuItemID = 12, @CuisineID = 21,@ItemName = 'Pizza Triplet',@ItemPrice = 155,@IsDelete = 1, @OutputMenuItemID  = 0
 --select * from RestaurantMenuItem
+--Select * from Cuisine
 --update Cuisine set RestaurantID= 7 where CuisineID=12
-
 
 CREATE OR ALTER  PROCEDURE [dbo].[USP_RestaurantMenuItem] (
 								@MenuItemID INT,
