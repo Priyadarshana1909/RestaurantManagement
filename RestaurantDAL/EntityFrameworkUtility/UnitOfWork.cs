@@ -21,6 +21,12 @@ namespace RestaurantDAL.EntityFrameworkUtility
             return _repository;
         }
 
+        public async Task<int> SaveAsync()
+        {
+            var id = await _dbContext.SaveChangesAsync();
+            return id;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed && disposing)
@@ -34,12 +40,6 @@ namespace RestaurantDAL.EntityFrameworkUtility
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        public async Task<int> SaveAsync()
-        {
-            var id = await _dbContext.SaveChangesAsync();
-            return id;
         }
     }   
 }

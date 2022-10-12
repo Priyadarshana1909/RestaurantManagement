@@ -37,5 +37,21 @@ namespace RestaurantWebAPI.Controllers
             return response;
         }
         #endregion
+
+        #region "Get Menu Item By MenuItemId"
+        /// <summary>
+        /// Get menu item details
+        /// it will give respective menu item by MenuItemId details
+        /// </summary>
+        /// <param name="MenuItemID"></param>
+        /// <returns>MenuItemResponse</returns>
+        [HttpGet]
+        [Route("GetMenuItemPrice/{MenuItemID}")]
+        public async Task<ActionResult<MenuItemResponse>> GetMenuItem(int MenuItemID = 0)
+        {
+            var response = _manageMenuItemBLL.GetMenuItemPrice(MenuItemID);
+            return response;
+        }
+        #endregion
     }
 }

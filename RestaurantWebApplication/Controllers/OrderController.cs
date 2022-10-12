@@ -44,7 +44,7 @@ namespace RestaurantWebApplication.Controllers
 
                 if (GetMenuItemResponse?.MenuItems != null && GetMenuItemResponse.MenuItems.Any())
                     addUpdateOrder.MenuItems = GetMenuItemResponse.MenuItems;
-
+                    addUpdateOrder.ItemPrice = GetMenuItemResponse.MenuItems.First().ItemPrice;
                 var GetDiningTableResponse = _getDiningTables(restaurants.Restaurants.First().RestaurantID).Result;
 
                 if (GetDiningTableResponse?.DiningTables != null && GetDiningTableResponse.DiningTables.Any())
@@ -83,7 +83,7 @@ namespace RestaurantWebApplication.Controllers
                     var GetMenuItemResponse = _getMenuItems(addUpdateOrder.RestaurantID).Result;
 
                     if (GetMenuItemResponse?.MenuItems != null && GetMenuItemResponse.MenuItems.Any())
-                        addUpdateOrder.MenuItems = GetMenuItemResponse.MenuItems;
+                        addUpdateOrder.MenuItems = GetMenuItemResponse.MenuItems;                        
 
                     var GetDiningTableResponse = _getDiningTables(addUpdateOrder.RestaurantID).Result;
 
@@ -157,6 +157,12 @@ namespace RestaurantWebApplication.Controllers
             return Json(menuItems);
         }
 
+        public async Task<IActionResult> GetMenuItemPrice(int MenuItemId)
+        {
+            var menuItemPrice = await _getMenuItemPrice(MenuItemId);
+            return Json(menuItemPrice);
+        }
+
         public async Task<IActionResult> GetDiningTables(int RestaurantId)
         {
             var diningTables = await _getDiningTables(RestaurantId);
@@ -178,6 +184,11 @@ namespace RestaurantWebApplication.Controllers
         private async Task<MenuItemResponse> _getMenuItems(int RestaurantId)
         {
             return await _apiService.ExecuteRequest<MenuItemResponse>("MenuItem/GetMenuItem/" + RestaurantId, HttpMethod.Get, null);
+        }
+
+        private async Task<MenuItemResponse> _getMenuItemPrice(int MenuItemId)
+        {
+            return await _apiService.ExecuteRequest<MenuItemResponse>("MenuItem/GetMenuItemPrice/" + MenuItemId, HttpMethod.Get, null);
         }
 
         private async Task<DiningTableResponse> _getDiningTables(int RestaurantId)

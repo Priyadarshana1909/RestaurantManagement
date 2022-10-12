@@ -5,5 +5,6 @@ namespace RestaurantBLL.Interface
     public interface IManageMenuItemBLL
     {
         MenuItemResponse GetMenuItems(int RestaurantId);
+        MenuItemResponse GetMenuItemPrice(int MenuItemId);
     }
 }

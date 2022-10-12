@@ -37,7 +37,11 @@
                 </select>
                 <span asp-validation-for="DiningTableID" class="text-danger"></span>
             </div>
-
+            <div class="form-group">
+                <label asp-for="ItemPrice" class="control-label"></label>
+                <input asp-for="ItemPrice" readonly="readonly" class="form-control" />
+                <span asp-validation-for="ItemPrice" class="text-danger"></span>
+            </div>
              <div class="form-group">
                 <label asp-for="ItemQuantity" class="control-label"></label>
                 <input asp-for="ItemQuantity" class="form-control" />
@@ -76,11 +80,12 @@
                     async : false,
                      data: { "RestaurantId": restaurantId },
                     success: function (response) {
-                      
+                        debugger;
                         $.each(response.menuItems, function (i, menuItem) {  
                           
                             $("#MenuItemID").append('<option value="' + menuItem.menuItemID + '">' +    
-                                 menuItem.itemName + '</option>');                                                                                                  
+                                 menuItem.itemName + '</option>');  
+                             $("#ItemPrice").val(response.menuItems[0].itemPrice); 
                             // here we are adding option for States  
    
                             });  
@@ -124,6 +129,34 @@
                    }
                 });
            
+         });
+     });
+    $(function () {
+         $("select#MenuItemID").change(function ()
+         {
+             var menuItemId = $(this).val();
+
+              $("#ItemPrice").empty();              
+              $.ajax({
+                    type: "GET",
+                    url: "/Order/GetMenuItemPrice/",
+                    async : false,
+                     data: { "MenuItemID": menuItemId },
+                    success: function (response) {      
+                        debugger;
+                        $("#ItemPrice").val(response.menuItems[0].itemPrice); 
+                    },
+                    failure: function (response) {
+                       
+                         alert(response);
+                       // alert(response.responseText);
+                    },
+                    error: function (response) {
+                       
+                         alert(response);
+                       // alert(response.responseText);
+                   }
+                });
          });
      });
 </script>

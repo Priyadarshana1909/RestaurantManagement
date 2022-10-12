@@ -52,7 +52,7 @@ else @if (TempData["Message"] != null)
                 <td style="text-align:right;width:140px;">
                     @Html.DisplayFor(modelItem => item.BillAmount)
                 </td>
-                <td>
+                <td hidden>
                     @Html.ActionLink("Edit", "Edit", new {  id = item.BillsID  }) |
                     <a href="javascript:void(0);" class="delete" id="@item.BillsID"
                    data-href="@Url.Action("Delete", "Bill", new { lineid = item.BillsID })">Delete</a>

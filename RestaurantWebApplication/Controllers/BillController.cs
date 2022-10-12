@@ -52,11 +52,19 @@ namespace RestaurantWebApplication.Controllers
 
             var orderResponse = await _apiService.ExecuteRequest<OrderResponse>("Order/GetOrder/0", HttpMethod.Get, null);
 
+            //if (orderResponse?.Orders != null)
+            //{
+            //    addUpdateBill.Orders = orderResponse.Orders;
+            //}
             if (orderResponse?.Orders != null)
             {
                 addUpdateBill.Orders = orderResponse.Orders;
-            }
 
+                var GetAmountResponse = _getOrder(orderResponse.Orders.First().OrderID).Result;
+
+                if (GetAmountResponse?.Orders != null && GetAmountResponse.Orders.Any())
+                    addUpdateBill.BillAmount = GetAmountResponse.Orders.First().OrderAmount;              
+            }
             return View(addUpdateBill);
         }
 
@@ -202,6 +210,22 @@ namespace RestaurantWebApplication.Controllers
             var deleteBillResponse = await _apiService.ExecuteRequest<BillResponse>("Bill/AddUpdateBill", HttpMethod.Post, addUpdateBill);
             return Json(deleteBillResponse);
         }
+        #endregion
+
+        #region "Cascade dropdown"
+        public async Task<IActionResult> GetOrder(int OrderID)
+        {
+            var orderAmount = await _getOrder(OrderID);
+            return Json(orderAmount);
+        }
+        #endregion
+
+        #region "Private functions"
+        private async Task<OrderResponse> _getOrder(int OrderID)
+        {
+            return await _apiService.ExecuteRequest<OrderResponse>("Order/GetOrder/" + OrderID, HttpMethod.Get, null);
+        }
+
         #endregion
 
         #endregion

@@ -14,15 +14,12 @@ namespace RestaurantDAL
     public class ManageOrderDAL : IManageOrderDAL
     {
         private static string ConnectionString = Common.GetConnectionString();
-
-
         private readonly IUnitOfWork<EntityFrameworkUtility.Order> _orderRepository;
-
+      
         public ManageOrderDAL(IUnitOfWork<EntityFrameworkUtility.Order> orderRepository)
         {
             _orderRepository = orderRepository;
         }
-
 
         /// <summary>
         /// Get order
@@ -79,6 +76,7 @@ namespace RestaurantDAL
         /// <returns></returns>
         public BaseResponse AddUpdateOrder(AddUpdateOrder AddUpdateOrder)
         {
+           // var efUPdateOrderResponse = AddUpdateOrderEF(AddUpdateOrder).Result;
             var response = new BaseResponse();
             try
             {
@@ -89,7 +87,6 @@ namespace RestaurantDAL
                 parameters2[1] = new SqlParameter("@RestaurantID", AddUpdateOrder.RestaurantID);
                 parameters2[2] = new SqlParameter("@MenuItemID", AddUpdateOrder.MenuItemID);
                 parameters2[3] = new SqlParameter("@ItemQuantity", AddUpdateOrder.ItemQuantity);
-                //parameters2[4] = new SqlParameter("@OrderAmount", AddUpdateOrder.OrderAmount);
                 parameters2[4] = new SqlParameter("@DiningTableID", AddUpdateOrder.DiningTableID);
                 parameters2[5] = new SqlParameter("@IsDelete", AddUpdateOrder.IsDelete);
                 parameters2[6] = new SqlParameter("@OrderDate", AddUpdateOrder.OrderDate);
@@ -101,7 +98,7 @@ namespace RestaurantDAL
 
                 SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure, "USP_Order", parameters2);
 
-                if(Convert.ToInt32(parameters2[7].Value) > 0)
+                if (Convert.ToInt32(parameters2[7].Value) > 0)
                     response.IsSuccessFull = true;
             }
             catch (Exception ex)
@@ -111,5 +108,44 @@ namespace RestaurantDAL
             }
             return response;
         }
+
+        //private readonly IUnitOfWork<EntityFrameworkUtility.Restaurant> _resRepository;
+        //private readonly IUnitOfWork<EntityFrameworkUtility.RestaurantMenuItem> _menuItemRepository;
+
+        //private async Task<BaseResponse> AddUpdateOrderEF(AddUpdateOrder AddUpdateOrder)
+        //{
+        //    Expression<Func<EntityFrameworkUtility.Order, bool>> OrderPredicate = PredicateBuilder.New<EntityFrameworkUtility.Order>(true);
+        //    var response = new BaseResponse();
+
+        //    try
+        //    {
+        //        OrderPredicate = OrderPredicate.And(x => x.OrderID == 38);
+
+        //        var Orders = _orderRepository.DbRepository().GetQueryWithIncludes(OrderPredicate, null, new string[] { "Restaurant", "RestaurantMenuItem" }).ToList();
+
+        //        if (Orders != null && Orders.Any())
+        //        {
+        //            var order = Orders.FirstOrDefault();
+        //            if (order != null)
+        //            {
+        //                order.OrderDate = DateTime.Now;
+
+        //                _orderRepository.DbRepository().Update(order);
+
+        //                await _orderRepository.SaveAsync();
+
+        //                if (Convert.ToInt32(order.OrderID) > 0)
+        //                    response.IsSuccessFull = true;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.IsSuccessFull = false;
+        //        response.ErrorMessage = ex.Message;
+        //    }
+        //    return response;
+        //}
+
     }
 }

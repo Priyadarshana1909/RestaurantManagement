@@ -16,6 +16,9 @@ namespace RestaurantDTO.Request
         [Display(Name = "Item")]
         public int MenuItemID { get; set; }
 
+        [Display(Name = "Price")]
+        public double ItemPrice { get; set; }
+
         [Required(AllowEmptyStrings = false)]
         [Display(Name = "Quantity")]
         public int? ItemQuantity { get; set; }

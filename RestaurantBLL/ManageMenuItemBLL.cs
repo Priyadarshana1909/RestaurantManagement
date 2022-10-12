@@ -25,5 +25,10 @@ namespace RestaurantBLL
         {
             return _manageMenuItemDAL.GetMenuItemFromRestaurantId(RestaurantId);
         }
+
+        public MenuItemResponse GetMenuItemPrice(int MenuItemId)
+        {
+            return _manageMenuItemDAL.GetMenuItemPrice(MenuItemId);
+        }
     }
 }

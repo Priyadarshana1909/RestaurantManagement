@@ -11,7 +11,6 @@ namespace RestaurantDAL
        
         public DbContext Context { get { return _context; } set { _context = value; DbSet = value.Set<TEntity>(); } }
 
-       
         public virtual List<TEntity> GetQueryWithIncludes(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, params string[] include)
         {
             try
@@ -37,5 +36,15 @@ namespace RestaurantDAL
 
         }
       
+        public virtual void Insert(TEntity entity)
+        {
+            DbSet.Add(entity);
+        }
+
+        public virtual void Update(TEntity entityToUpdate)
+        {
+            DbSet.Update(entityToUpdate);
+        }
+
     }
 }

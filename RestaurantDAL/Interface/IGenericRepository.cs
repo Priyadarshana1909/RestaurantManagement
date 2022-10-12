@@ -9,6 +9,8 @@ namespace RestaurantDAL.Interface
 
         List<TEntity> GetQueryWithIncludes(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, params string[] include);
 
-      
+        void Insert(TEntity entity);
+
+        void Update(TEntity entityToUpdate);
     }
 }
