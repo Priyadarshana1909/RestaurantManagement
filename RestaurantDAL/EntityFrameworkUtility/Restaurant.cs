@@ -23,5 +23,7 @@ namespace RestaurantDAL.EntityFrameworkUtility
 
         public List<Order> Orders { get; set; }
 
+        public List<DiningTable> DiningTables { get; set; }
+
     }
 }

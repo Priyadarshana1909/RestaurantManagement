@@ -14,12 +14,29 @@ namespace RestaurantDAL
     public class ManageOrderDAL : IManageOrderDAL
     {
         private static string ConnectionString = Common.GetConnectionString();
+
+
         private readonly IUnitOfWork<EntityFrameworkUtility.Order> _orderRepository;
-      
-        public ManageOrderDAL(IUnitOfWork<EntityFrameworkUtility.Order> orderRepository)
+        private readonly IUnitOfWork<EntityFrameworkUtility.Restaurant> _restaurantRepository;
+        private readonly IUnitOfWork<EntityFrameworkUtility.RestaurantMenuItem> _restaurantMenuItemRepository;
+        private readonly IUnitOfWork<EntityFrameworkUtility.DiningTable> _diningTableRepository;
+        private readonly IUnitOfWork<EntityFrameworkUtility.DiningTableTrack> _diningTableTrackRepository;
+
+        public ManageOrderDAL(IUnitOfWork<EntityFrameworkUtility.Order> orderRepository,
+            IUnitOfWork<EntityFrameworkUtility.Restaurant> restaurantRepository,
+            IUnitOfWork<EntityFrameworkUtility.RestaurantMenuItem> restaurantMenuItemRepository,
+            IUnitOfWork<EntityFrameworkUtility.DiningTable> diningTableRepository,
+            IUnitOfWork<EntityFrameworkUtility.DiningTableTrack> diningTableTrackRepository
+            )
         {
             _orderRepository = orderRepository;
+            _restaurantRepository = restaurantRepository;
+            _restaurantMenuItemRepository = restaurantMenuItemRepository;
+            _diningTableRepository = diningTableRepository;
+            _diningTableTrackRepository = diningTableTrackRepository;  
+
         }
+
 
         /// <summary>
         /// Get order
@@ -38,7 +55,7 @@ namespace RestaurantDAL
                 if (OrderId != null)
                     OrderPredicate = OrderPredicate.And(x => x.OrderID == OrderId.Value);
 
-                var Orders = _orderRepository.DbRepository().GetQueryWithIncludes(OrderId == null ? null : OrderPredicate, null, new string[] { "Restaurant", "RestaurantMenuItem" }).ToList();
+                var Orders = _orderRepository.DbRepository().GetQueryWithIncludes(OrderId == null ? null : OrderPredicate, null, new string[] { "Restaurant", "RestaurantMenuItem", "Restaurant.DiningTables" }).ToList();
 
                 if (Orders != null && Orders.Any())
                 {
@@ -53,7 +70,7 @@ namespace RestaurantDAL
                             ItemQuantity = orderItem.ItemQuantity,
                             ItemPrice = orderItem.RestaurantMenuItem.ItemPrice,
                             OrderAmount = orderItem.OrderAmount,
-                            DiningTableID = orderItem.DiningTableID,
+                            DiningTableID = orderItem.DiningTable.DiningTableID,
                             RestaurantName = orderItem.Restaurant.RestaurantName,
                             ItemName = orderItem.RestaurantMenuItem.ItemName
                         });
@@ -76,30 +93,98 @@ namespace RestaurantDAL
         /// <returns></returns>
         public BaseResponse AddUpdateOrder(AddUpdateOrder AddUpdateOrder)
         {
-           // var efUPdateOrderResponse = AddUpdateOrderEF(AddUpdateOrder).Result;
             var response = new BaseResponse();
+
             try
             {
-
-                SqlParameter[] parameters2 = new SqlParameter[8];
-                var rowCount = 0;
-                parameters2[0] = new SqlParameter("@OrderID", AddUpdateOrder.OrderID);
-                parameters2[1] = new SqlParameter("@RestaurantID", AddUpdateOrder.RestaurantID);
-                parameters2[2] = new SqlParameter("@MenuItemID", AddUpdateOrder.MenuItemID);
-                parameters2[3] = new SqlParameter("@ItemQuantity", AddUpdateOrder.ItemQuantity);
-                parameters2[4] = new SqlParameter("@DiningTableID", AddUpdateOrder.DiningTableID);
-                parameters2[5] = new SqlParameter("@IsDelete", AddUpdateOrder.IsDelete);
-                parameters2[6] = new SqlParameter("@OrderDate", AddUpdateOrder.OrderDate);
-                parameters2[7] = new SqlParameter("@OutputId", rowCount)
+                if (AddUpdateOrder.OrderID == 0)
                 {
-                    Direction = ParameterDirection.Output
+                    Expression<Func<EntityFrameworkUtility.Restaurant, bool>> RestaurantPredicate = PredicateBuilder.New<EntityFrameworkUtility.Restaurant>(true);
 
-                };
+                    RestaurantPredicate = RestaurantPredicate.And(x => x.RestaurantID == AddUpdateOrder.RestaurantID);
 
-                SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure, "USP_Order", parameters2);
+                    var restaurants = _restaurantRepository.DbRepository().GetQueryWithIncludes(RestaurantPredicate, null, null).ToList();
 
-                if (Convert.ToInt32(parameters2[7].Value) > 0)
-                    response.IsSuccessFull = true;
+                    if (restaurants == null || !restaurants.Any())
+                    {
+                        response.ErrorMessage = "Invalid restaurant id";
+                        return response;
+                    }
+
+                    Expression<Func<EntityFrameworkUtility.RestaurantMenuItem, bool>> RestaurantMenuItemPredicate = PredicateBuilder.New<EntityFrameworkUtility.RestaurantMenuItem>(true);
+
+                    RestaurantMenuItemPredicate = RestaurantMenuItemPredicate.And(x => x.MenuItemID == AddUpdateOrder.MenuItemID);
+
+                    var restaurantMenuItems = _restaurantMenuItemRepository.DbRepository().GetQueryWithIncludes(RestaurantMenuItemPredicate, null, null).ToList();
+
+                    if (restaurantMenuItems == null || !restaurantMenuItems.Any())
+                    {
+                        response.ErrorMessage = "Invalid restaurant menu item id";
+                        return response;
+                    }
+
+
+                    Expression<Func<EntityFrameworkUtility.DiningTable, bool>> DiningTablePredicate = PredicateBuilder.New<EntityFrameworkUtility.DiningTable>(true);
+
+                    DiningTablePredicate = DiningTablePredicate.And(x => x.DiningTableID == AddUpdateOrder.DiningTableID);
+
+                    var diningTables = _diningTableRepository.DbRepository().GetQueryWithIncludes(DiningTablePredicate, null, new string[] { "DiningTableTrack" }).ToList();
+
+                    if (diningTables == null || !diningTables.Any())
+                    {
+                        response.ErrorMessage = "Invalid dining table id";
+                        return response;
+                    }
+
+
+                    var order = new EntityFrameworkUtility.Order();
+                    order.ItemQuantity = AddUpdateOrder.ItemQuantity ?? 0;
+                    order.Restaurant = restaurants.FirstOrDefault();
+                    order.RestaurantMenuItem = restaurantMenuItems.FirstOrDefault();
+                    order.OrderAmount = restaurantMenuItems.FirstOrDefault().ItemPrice * order.ItemQuantity;
+                    order.OrderDate = DateTime.Now;
+                    order.DiningTable = diningTables.FirstOrDefault();
+
+                    _orderRepository.DbRepository().Insert(order);
+
+                    _ = _orderRepository.SaveAsync().Result;
+
+                    if (Convert.ToInt32(order.OrderID) > 0)
+                    {
+                        var diningTableTrack = diningTables.FirstOrDefault().DiningTableTrack;
+
+                        if (diningTableTrack != null)
+                        {
+                            diningTableTrack.TableStatus = "Occupied";
+                            _diningTableTrackRepository.DbRepository().Update(diningTableTrack);
+                            _ = _diningTableTrackRepository.SaveAsync().Result;
+                        }
+                        response.IsSuccessFull = true;
+                    }
+                }
+                else
+                {
+                    SqlParameter[] parameters2 = new SqlParameter[8];
+                    var rowCount = 0;
+                    parameters2[0] = new SqlParameter("@OrderID", AddUpdateOrder.OrderID);
+                    parameters2[1] = new SqlParameter("@RestaurantID", AddUpdateOrder.RestaurantID);
+                    parameters2[2] = new SqlParameter("@MenuItemID", AddUpdateOrder.MenuItemID);
+                    parameters2[3] = new SqlParameter("@ItemQuantity", AddUpdateOrder.ItemQuantity);
+                    //parameters2[4] = new SqlParameter("@OrderAmount", AddUpdateOrder.OrderAmount);
+                    parameters2[4] = new SqlParameter("@DiningTableID", AddUpdateOrder.DiningTableID);
+                    parameters2[5] = new SqlParameter("@IsDelete", AddUpdateOrder.IsDelete);
+                    parameters2[6] = new SqlParameter("@OrderDate", AddUpdateOrder.OrderDate);
+                    parameters2[7] = new SqlParameter("@OutputId", rowCount)
+                    {
+                        Direction = ParameterDirection.Output
+
+                    };
+
+                    SqlHelper.ExecuteNonQuery(ConnectionString, CommandType.StoredProcedure, "USP_Order", parameters2);
+
+                    if (Convert.ToInt32(parameters2[7].Value) > 0)
+                        response.IsSuccessFull = true;
+                }
             }
             catch (Exception ex)
             {
@@ -108,44 +193,5 @@ namespace RestaurantDAL
             }
             return response;
         }
-
-        //private readonly IUnitOfWork<EntityFrameworkUtility.Restaurant> _resRepository;
-        //private readonly IUnitOfWork<EntityFrameworkUtility.RestaurantMenuItem> _menuItemRepository;
-
-        //private async Task<BaseResponse> AddUpdateOrderEF(AddUpdateOrder AddUpdateOrder)
-        //{
-        //    Expression<Func<EntityFrameworkUtility.Order, bool>> OrderPredicate = PredicateBuilder.New<EntityFrameworkUtility.Order>(true);
-        //    var response = new BaseResponse();
-
-        //    try
-        //    {
-        //        OrderPredicate = OrderPredicate.And(x => x.OrderID == 38);
-
-        //        var Orders = _orderRepository.DbRepository().GetQueryWithIncludes(OrderPredicate, null, new string[] { "Restaurant", "RestaurantMenuItem" }).ToList();
-
-        //        if (Orders != null && Orders.Any())
-        //        {
-        //            var order = Orders.FirstOrDefault();
-        //            if (order != null)
-        //            {
-        //                order.OrderDate = DateTime.Now;
-
-        //                _orderRepository.DbRepository().Update(order);
-
-        //                await _orderRepository.SaveAsync();
-
-        //                if (Convert.ToInt32(order.OrderID) > 0)
-        //                    response.IsSuccessFull = true;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.IsSuccessFull = false;
-        //        response.ErrorMessage = ex.Message;
-        //    }
-        //    return response;
-        //}
-
     }
 }

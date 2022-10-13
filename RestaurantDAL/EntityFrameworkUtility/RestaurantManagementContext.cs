@@ -13,8 +13,6 @@ namespace RestaurantDAL.EntityFrameworkUtility
 
         }
 
-        //DbSet properties that contain the table data from the database
-
         public DbSet<Restaurant> Restaurant { get; set; }
 
         public DbSet<RestaurantMenuItem> RestaurantMenuItem { get; set; }

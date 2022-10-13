@@ -22,7 +22,10 @@ namespace RestaurantDAL.EntityFrameworkUtility
 
         public double OrderAmount { get; set; }
 
-        public int DiningTableID { get; set; }
-        
+        //public int DiningTableID { get; set; }
+
+        [ForeignKey("DiningTableID")]
+        public DiningTable DiningTable { get; set; }
+
     }
 }

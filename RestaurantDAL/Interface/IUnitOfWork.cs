@@ -3,8 +3,6 @@
     public interface IUnitOfWork<TEntity>
     {
         IGenericRepository<TEntity> DbRepository();
-
         Task<int> SaveAsync();
-
     }
 }

@@ -505,10 +505,10 @@ AS
 BEGIN
 	IF(@ListBy = 'Table')
 	BEGIN
-			SELECT		CAST(OrderDate AS DATE) AS OrdersDate,YEAR(CAST(OrderDate AS DATE)) [year],
+			SELECT		DiningTableID,
 						Sum(OrderAmount) as TotalAmount 
 			FROM		[Order]
-			GROUP BY	CAST(OrderDate AS DATE)
+			GROUP BY	DiningTableID
 	END
 	IF(@ListBy = 'OrderDate' )
 	BEGIN
