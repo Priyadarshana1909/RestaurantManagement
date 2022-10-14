@@ -63,7 +63,12 @@ namespace RestaurantWebApplication.Controllers
                 var GetAmountResponse = _getOrder(orderResponse.Orders.First().OrderID).Result;
 
                 if (GetAmountResponse?.Orders != null && GetAmountResponse.Orders.Any())
-                    addUpdateBill.BillAmount = GetAmountResponse.Orders.First().OrderAmount;              
+                {
+                    addUpdateBill.BillAmount = GetAmountResponse.Orders.First().OrderAmount;
+                    addUpdateBill.RestaurantName = GetAmountResponse.Orders.First().RestaurantName;
+                    addUpdateBill.RestaurantID = GetAmountResponse.Orders.First().RestaurantID;
+                }
+                   
             }
             return View(addUpdateBill);
         }
@@ -188,7 +193,7 @@ namespace RestaurantWebApplication.Controllers
         #endregion
 
         #region "Delete"
-   
+
 
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
@@ -202,7 +207,7 @@ namespace RestaurantWebApplication.Controllers
                 addUpdateBill.BillsID = id;
                 addUpdateBill.RestaurantID = response.Bills[0].RestaurantID;
                 addUpdateBill.BillAmount = response.Bills[0].BillAmount;
-                addUpdateBill.CustomerID = response.Bills[0].CustomerID;    
+                addUpdateBill.CustomerID = response.Bills[0].CustomerID;
             }
 
             addUpdateBill.IsDelete = true;

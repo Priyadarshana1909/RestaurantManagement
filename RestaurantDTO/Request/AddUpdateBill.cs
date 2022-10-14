@@ -29,5 +29,8 @@ namespace RestaurantDTO.Request
 
         public bool IsDelete { get; set; }
         public List<Bill> Bills { get; set; } = new();
+
+        [Display(Name = "Restaurant Name")]
+        public string RestaurantName { get; set; }
     }
 }

@@ -65,14 +65,14 @@ namespace RestaurantDAL
                         {
                             OrderID = orderItem.OrderID,
                             OrderDate = orderItem.OrderDate,
-                            RestaurantID = orderItem.Restaurant.RestaurantID,
-                            MenuItemID = orderItem.RestaurantMenuItem.MenuItemID,
+                            RestaurantID = orderItem.Restaurant?.RestaurantID ?? 0,
+                            MenuItemID = orderItem.RestaurantMenuItem?.MenuItemID ?? 0,
                             ItemQuantity = orderItem.ItemQuantity,
-                            ItemPrice = orderItem.RestaurantMenuItem.ItemPrice,
+                            ItemPrice = orderItem.RestaurantMenuItem?.ItemPrice ?? 0,
                             OrderAmount = orderItem.OrderAmount,
-                            DiningTableID = orderItem.DiningTable.DiningTableID,
-                            RestaurantName = orderItem.Restaurant.RestaurantName,
-                            ItemName = orderItem.RestaurantMenuItem.ItemName
+                            DiningTableID = orderItem.DiningTable?.DiningTableID ?? 0,
+                            RestaurantName = orderItem.Restaurant?.RestaurantName, 
+                            ItemName = orderItem.RestaurantMenuItem?.ItemName
                         });
                     }
                 }
@@ -193,5 +193,7 @@ namespace RestaurantDAL
             }
             return response;
         }
+
+
     }
 }

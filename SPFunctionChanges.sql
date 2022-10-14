@@ -73,104 +73,109 @@ GO
 --SELECT * FROM Bills
 --Select * from [Order]
 --Exec [dbo].[USP_Bills]  @BillsID = 0,@RestaurantID = 4, @OrderID = 43, @BillAmount = 10, @CustomerID =14,@IsDelete = 0, @OutputID = 0
-CREATE OR ALTER  PROCEDURE [dbo].[USP_Bills] (
-								@BillsID INT,
-                                @OrderID INT,
-								@RestaurantID INT,
-								@BillAmount FLOAT,
-								@CustomerID INT,
-                               	@IsDelete BIT,
-								@OutputID INT OUTPUT)								
-AS
-BEGIN
-BEGIN TRY
-	BEGIN TRANSACTION	
-	        --to raise exception un comment below 2 lines
+ALTER   PROCEDURE [dbo].[USP_Bills] (  
+        @BillsID INT,  
+        @OrderID INT,  
+        @RestaurantID INT,  
+        @BillAmount FLOAT,  
+        @CustomerID INT,  
+        @IsDelete BIT,  
+        @OutputID INT OUTPUT)          
+AS  
+BEGIN  
+BEGIN TRY  
+ BEGIN TRANSACTION   
+         --to raise exception un comment below 2 lines  
+  
+    --Declare @temp1 Int  = 0  
+    --   Set @temp1 = 1 / 0;  
+  
+     
+   IF(@IsDelete = 1 AND ((@BillsID <= 0) OR (NOT EXISTS (SELECT 1 FROM Bills WHERE BillsID = @BillsID))))  
+   BEGIN  
+    -- in case of delete  
+    RAISERROR ('Invalid Bills Id',11,1);   
+   END  
+   IF(@IsDelete = 0 AND ((@OrderID <= 0) OR (NOT EXISTS (SELECT 1 FROM [Order] WHERE OrderID  = @OrderID))))  
+   BEGIN  
+    -- in case of add / edit  
+    RAISERROR ('Invalid Order Id',11,1);   
+   END  
+  
+   DECLARE @DiningTableID INT  
+   IF (@IsDelete = 0)  
+   BEGIN  
+       SELECT @BillAmount = OrderAmount,  
+    @RestaurantID = RestaurantID,  
+    @DiningTableID = DiningTableID  
+    FROM [dbo].[UDP_GetOrderDetails](@OrderID);  
+  
+   END  
+   IF (@IsDelete = 0 AND @BillsID = 0)  
+    BEGIN  
+      -- Add Operation 
 
-			 --   Declare @temp1 Int  = 0
-		   --Set @temp1 = 1 / 0;
-
-			
-			IF(@IsDelete = 1 AND ((@BillsID <= 0) OR (NOT EXISTS (SELECT 1 FROM Bills WHERE BillsID = @BillsID))))
-			BEGIN
-				-- in case of delete
-				RAISERROR ('Invalid Bills Id',11,1); 
-			END
-			IF(@IsDelete = 0 AND ((@OrderID <= 0) OR (NOT EXISTS (SELECT 1 FROM [Order] WHERE OrderID  = @OrderID))))
-			BEGIN
-				-- in case of add / edit
-				RAISERROR ('Invalid Order Id',11,1); 
-			END
-
-			DECLARE @DiningTableID INT
-			IF (@IsDelete = 0)
-			BEGIN
-			    SELECT @BillAmount = OrderAmount,
-				@RestaurantID = RestaurantID,
-				@DiningTableID = DiningTableID
-				FROM [dbo].[UDP_GetOrderDetails](@OrderID);
-
-			END
-			IF (@IsDelete = 0 AND @BillsID = 0)
-			 BEGIN
-			   -- Add Operation
-				INSERT INTO Bills (OrderID,RestaurantID, BillAmount, CustomerID)
-					VALUES ( @OrderID,@RestaurantID, @BillAmount, @CustomerID);
-				
-				Update DiningTableTrack Set TableStatus = 'Occupied'
-				 WHERE DiningTableID = @DiningTableID;
-
-				 SELECT @OutputID = @@ROWCOUNT;
-					
-			END
-			ELSE IF (@IsDelete = 0 AND @BillsID > 0)
-			BEGIN
-			-- Update Operation
-					UPDATE Bills
-						SET OrderID = @OrderID,
-							RestaurantID = @RestaurantID,
-							BillAmount = @BillAmount,
-							CustomerID = @CustomerID
-						WHERE BillsID  = @BillsID;
-
-						 SELECT @OutputID = @@ROWCOUNT;
-			END
-			ELSE IF (@IsDelete = 1)
-			BEGIN
-				DELETE FROM Bills WHERE BillsID  = @BillsID;
-
-				 SELECT @OutputID = @@ROWCOUNT;
-			END
-	IF @@TRANCOUNT > 0
+	IF NOT EXISTS(SELECT 1 FROM Bills WHERE OrderID = @OrderID)
 	BEGIN
-	  COMMIT TRANSACTION
+		INSERT INTO Bills (OrderID,RestaurantID, BillAmount, CustomerID)  
+		 VALUES ( @OrderID,@RestaurantID, @BillAmount, @CustomerID);  
+      
+		Update DiningTableTrack Set TableStatus = 'Occupied'  
+		 WHERE DiningTableID = @DiningTableID;  
+  
+		 SELECT @OutputID = @@ROWCOUNT;  
+    END
+	ELSE
+	BEGIN
+		  RAISERROR ('Bills for order already exists',11,1);   
 	END
-END TRY
-BEGIN CATCH
-   --Print 'in catch'
-		-- return the error inside the CATCH block
-		-- Transaction uncommittable
-		IF @@TRANCOUNT > 0
-		BEGIN
-		-- Print 'Roll back tranaction'
-		  ROLLBACK TRANSACTION
-        END
-		DECLARE 
-		@ErrorMessage  NVARCHAR(4000), 
-		@ErrorSeverity INT, 
-		@ErrorState    INT;
-
-		SELECT 
-			@ErrorMessage = ERROR_MESSAGE(), 
-			@ErrorSeverity = ERROR_SEVERITY(), 
-			@ErrorState = ERROR_STATE();
-
-		RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);
-
-END CATCH
-
-END
-GO
+   END  
+   ELSE IF (@IsDelete = 0 AND @BillsID > 0)  
+   BEGIN  
+   -- Update Operation  
+     UPDATE Bills  
+      SET OrderID = @OrderID,  
+       BillAmount = @BillAmount,  
+       CustomerID = @CustomerID  
+      WHERE BillsID  = @BillsID;  
+  
+       SELECT @OutputID = @@ROWCOUNT;  
+   END  
+   ELSE IF (@IsDelete = 1)  
+   BEGIN  
+    DELETE FROM Bills WHERE BillsID  = @BillsID;  
+  
+     SELECT @OutputID = @@ROWCOUNT;  
+   END  
+ IF @@TRANCOUNT > 0  
+ BEGIN  
+   COMMIT TRANSACTION  
+ END  
+END TRY  
+BEGIN CATCH  
+   --Print 'in catch'  
+  -- return the error inside the CATCH block  
+  -- Transaction uncommittable  
+  IF @@TRANCOUNT > 0  
+  BEGIN  
+    --Print 'Roll back tranaction'  
+    ROLLBACK TRANSACTION  
+        END  
+  DECLARE   
+  @ErrorMessage  NVARCHAR(4000),   
+  @ErrorSeverity INT,   
+  @ErrorState    INT;  
+  
+  SELECT   
+   @ErrorMessage = ERROR_MESSAGE(),   
+   @ErrorSeverity = ERROR_SEVERITY(),   
+   @ErrorState = ERROR_STATE();  
+  
+  RAISERROR(@ErrorMessage, @ErrorSeverity, @ErrorState);  
+  
+END CATCH  
+  
+END  
 /****** Object:  StoredProcedure [dbo].[USP_Cuisine]    Script Date: 08/10/2022 23:16:33 ******/
 SET ANSI_NULLS ON
 GO

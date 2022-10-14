@@ -50,7 +50,7 @@ else @if (TempData["Message"] != null)
                 </td>
                
                 <td style="text-align:right;width:140px;">
-                    @Html.DisplayFor(modelItem => item.BillAmount)
+                    @Html.DisplayFor(modelItem => item.FormattedBillAmount)
                 </td>
                 <td hidden>
                     @Html.ActionLink("Edit", "Edit", new {  id = item.BillsID  }) |

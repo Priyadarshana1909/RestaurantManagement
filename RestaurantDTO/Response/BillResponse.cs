@@ -18,8 +18,23 @@ namespace RestaurantDTO.Response
         public int RestaurantID { get; set; }
 
         [Display(Name = "Bill Amount")]
-        public double BillAmount { get; set; }
+        public double? BillAmount { get; set; }
 
+        [Display(Name = "Bill Amount")]
+        public string FormattedBillAmount
+        {
+            get
+            {
+                if (BillAmount != null)
+                {
+                    return BillAmount.Value.ToString("F");
+                }
+                else
+                {
+                    return string.Empty;
+                }
+            }
+        }
         public int CustomerID { get; set; }
 
         [Display(Name = "Customer Name")]
